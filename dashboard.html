@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Galería de Series - Pro Tracker</title>
+    <title>Mi Galería de Series</title>
     <style>
         :root { 
             --primary: #3498db; 
@@ -57,7 +57,7 @@
 <body>
 
     <header>
-        <h1>MySeriesTracker Pro</h1>
+        <h1>Control de Series</h1>
         <button onclick="logout()" style="background:transparent; color:white; border:1px solid white; padding:5px 10px; border-radius:5px; cursor:pointer;">Salir</button>
     </header>
 
@@ -91,7 +91,7 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) { currentUser = user; cargarSeries(); } 
-            else { window.location.href = "login.html"; }
+            else { window.location.href = "index.html"; }
         });
 
         document.getElementById('btn-save').onclick = async () => {
