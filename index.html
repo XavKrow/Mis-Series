@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mis Series App</title>
+    <style>
+        /* Diseño moderno para tu App */
+        body { font-family: 'Segoe UI', sans-serif; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; }
+        .login-card { background: #34495e; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 350px; text-align: center; }
+        h1 { margin-bottom: 1.5rem; color: #3498db; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #27ae60; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #2ecc71; }
+        .toggle-link { margin-top: 15px; font-size: 0.9rem; cursor: pointer; color: #bdc3c7; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>MySeriesTracker</h1>
+        <div id="auth-form">
+            <input type="email" id="email" placeholder="Correo electrónico">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="btn-action">Iniciar Sesión</button>
+            <p class="toggle-link" id="toggle-auth">¿No tienes cuenta? Regístrate aquí</p>
+        </div>
+    </div>
+
+    <script type="module">
+      // 1. Importar las funciones que necesitamos de Google
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+      // 2. PEGA AQUÍ TU CONFIGURACIÓN (Lo que copiaste de Firebase)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBxdOcs-arbue2ZMw0ov0vwYnsiYcJaWKo",
+        authDomain: "misseriesapp-9ae46.firebaseapp.com",
+        projectId: "misseriesapp-9ae46",
+        storageBucket: "misseriesapp-9ae46.firebasestorage.app",
+        messagingSenderId: "957709827456",
+        appId: "1:957709827456:web:070fe276464b3fcc045565",
+        measurementId: "G-XJD6D6BYYS"
+      };
+
+
+      // 3. Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // Lógica de los botones
+      const btnAction = document.getElementById('btn-action');
+      const toggleAuth = document.getElementById('toggle-auth');
+      let isLogin = true;
+
+      toggleAuth.onclick = () => {
+          isLogin = !isLogin;
+          btnAction.innerText = isLogin ? 'Iniciar Sesión' : 'Registrarse';
+          toggleAuth.innerText = isLogin ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Ingresa aquí';
+      };
+
+      btnAction.onclick = async () => {
+          const email = document.getElementById('email').value;
+          const pass = document.getElementById('password').value;
+
+          try {
+              if (isLogin) {
+                  await signInWithEmailAndPassword(auth, email, pass);
+                  alert("¡Bienvenido de nuevo!"), window.location.href = "dashboard.html";
+              } else {
+                  await createUserWithEmailAndPassword(auth, email, pass);
+                  alert("¡Cuenta creada con éxito!");
+              }
+              // Aquí podrías redireccionar a tu página de series
+              // window.location.href = "dashboard.html";
+          } catch (error) {
+              alert("Error: " + error.message);
+          }
+      };
+    </script>
+</body>
+</html>
