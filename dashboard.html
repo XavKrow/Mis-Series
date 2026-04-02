@@ -172,7 +172,7 @@
 
                     container.innerHTML += `
                         <div class="card ${estado}">
-                            <img src="${data.imagen}" class="card-img">
+                            <img src="${data.imagen || 'https://via.placeholder.com/300x450?text=Sin+Portada'}" class="card-img">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
                                 <h3>${data.nombre}</h3>
                                 <span class="status-badge">${estado}</span>
