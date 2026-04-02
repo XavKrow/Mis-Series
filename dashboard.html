@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Series</title>
+    <title>Control de series</title>
     <style>
         :root { 
             --primary: #3498db; 
@@ -30,12 +30,13 @@
         header { background: #2c3e50; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         
         .add-section { background: var(--card-bg); padding: 20px; margin: 20px auto; max-width: 800px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; gap: 10px; flex-wrap: wrap; }
-        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 200px; background: var(--card-bg); color: var(--text); font-size: 16px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 200px; background: var(--card-bg); color: var(--text); font-size: 16px; }
         .btn-add { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        /* Buscador */
-        .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; }
-        #search-bar { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        /* Contenedor de Buscador y Filtro */
+        .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; display: flex; gap: 10px; }
+        #search-bar { flex: 2; padding: 12px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        #sort-filter { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
 
@@ -71,14 +72,14 @@
 
         .status-badge { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; background: rgba(0,0,0,0.1); }
 
-        /* --- MEDIA QUERIES PARA MÓVIL --- */
         @media (max-width: 600px) {
             header { flex-direction: column; padding: 1rem; gap: 15px; text-align: center; }
             .add-section { flex-direction: column; margin: 10px; gap: 10px; }
-            input { min-width: 0; width: 100%; }
+            .search-container { flex-direction: column; }
+            input, select { min-width: 0; width: 100%; }
             .grid { grid-template-columns: 1fr; padding: 10px; }
-            .btn-cap { width: 45px; height: 45px; font-size: 1.5rem; } /* Más grande para el pulgar */
-            .temp-info { padding-top: 35px; } /* Espacio para los botones de edición que quedan arriba */
+            .btn-cap { width: 45px; height: 45px; font-size: 1.5rem; }
+            .temp-info { padding-top: 35px; }
         }
     </style>
 </head>
@@ -101,6 +102,12 @@
 
     <div class="search-container">
         <input type="text" id="search-bar" placeholder="🔍 Buscar serie..." onkeyup="filtrarSeries()">
+        <select id="sort-filter" onchange="ordenarSeries()">
+            <option value="recientes">Nuevas primero</option>
+            <option value="nombre">Nombre (A-Z)</option>
+            <option value="progreso">Más avance</option>
+            <option value="valoracion">Mejor puntuadas</option>
+        </select>
     </div>
 
     <div class="grid" id="series-container"></div>
@@ -108,7 +115,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, where, onSnapshot, updateDoc, doc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, onSnapshot, updateDoc, doc, deleteDoc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBxdOcs-arbue2ZMw0ov0vwYnsiYcJaWKo",
@@ -162,6 +169,7 @@
         };
 
         function cargarSeries() {
+            // Traemos las series ordenadas por fecha por defecto
             const q = query(collection(db, "series"), where("userId", "==", currentUser.uid));
             onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('series-container');
@@ -179,7 +187,7 @@
                     }
 
                     container.innerHTML += `
-                        <div class="card ${estado}">
+                        <div class="card ${estado}" data-fecha="${data.timestamp || 0}">
                             <img src="${data.imagen || 'https://via.placeholder.com/300x450?text=Sin+Portada'}" class="card-img">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
                                 <h3>${data.nombre}</h3>
@@ -200,7 +208,7 @@
                             <div class="controls">
                                 <button class="btn-cap" onclick="modificarProgreso('${id}', -1)">-</button>
                                 <div style="text-align:center">
-                                    <span style="font-weight:bold; display:block;">${porcentaje}%</span>
+                                    <span class="pct-text" style="font-weight:bold; display:block;">${porcentaje}%</span>
                                     <small>${data.vistosGlobal}/${data.totalCapsSerie}</small>
                                 </div>
                                 <button class="btn-cap" onclick="modificarProgreso('${id}', 1)">+</button>
@@ -208,6 +216,8 @@
                             <button onclick="eliminarSerie('${id}')" style="border:none; background:none; cursor:pointer; width:100%; margin-top:15px; font-size:0.8rem; color:#888;">Eliminar Serie</button>
                         </div>`;
                 });
+                // Re-ordenar si ya había un filtro seleccionado tras la actualización
+                ordenarSeries();
             });
         }
 
@@ -222,6 +232,32 @@
                 const titulo = card.querySelector('h3').innerText.toLowerCase();
                 card.style.display = titulo.includes(busqueda) ? "block" : "none";
             });
+        };
+
+        window.ordenarSeries = () => {
+            const criterio = document.getElementById('sort-filter').value;
+            const container = document.getElementById('series-container');
+            const tarjetas = Array.from(container.getElementsByClassName('card'));
+
+            if(tarjetas.length === 0) return;
+
+            tarjetas.sort((a, b) => {
+                const nombreA = a.querySelector('h3').innerText.toLowerCase();
+                const nombreB = b.querySelector('h3').innerText.toLowerCase();
+                const pctA = parseInt(a.querySelector('.pct-text').innerText);
+                const pctB = parseInt(b.querySelector('.pct-text').innerText);
+                const estrellasA = a.querySelectorAll('.star.active').length;
+                const estrellasB = b.querySelectorAll('.star.active').length;
+                const fechaA = parseInt(a.dataset.fecha);
+                const fechaB = parseInt(b.dataset.fecha);
+
+                if (criterio === 'nombre') return nombreA.localeCompare(nombreB);
+                if (criterio === 'progreso') return pctB - pctA;
+                if (criterio === 'valoracion') return estrellasB - estrellasA;
+                return fechaB - fechaA; // Recientes por defecto
+            });
+
+            tarjetas.forEach(t => container.appendChild(t));
         };
 
         window.modificarProgreso = async (id, cambio) => {
