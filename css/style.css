@@ -100,13 +100,63 @@ input, select {
 .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
 
 .status-badge { 
-    font-size: 0.65rem; border-radius: 20px; padding: 4px 12px; 
-    background: rgba(99, 102, 241, 0.1); color: var(--primary); font-weight: bold;
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    letter-spacing: 1px;
 }
 
+/* Estilo base del badge */
+.status-badge { 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    letter-spacing: 1px;
+}
+
+/* Colores dinámicos según el estado */
+.card.pendiente .status-badge { 
+    background: rgba(239, 68, 68, 0.2); 
+    color: #f87171; 
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.card.viendo .status-badge { 
+    background: rgba(99, 102, 241, 0.2); 
+    color: #818cf8; 
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.card.terminada .status-badge { 
+    background: rgba(16, 185, 129, 0.2); 
+    color: #34d399; 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/*Un brillo sutil a la tarjeta según el estado */
+.card.viendo { box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15); }
+.card.terminada { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15); }
+
 .temp-info { 
-    background: rgba(0,0,0,0.03); padding: 15px; border-radius: 12px; 
-    margin: 15px 0; border-left: none; position: relative;
+    background: rgba(255, 255, 255, 0.05); /* Un brillo sutil en modo oscuro */
+    padding: 16px; 
+    border-radius: 12px; 
+    margin: 15px 0; 
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Textos dentro de la info de temporada */
+.temp-info b { color: var(--text-main); }
+.temp-info span { color: var(--text-muted); font-size: 0.85rem; }
+
+/* Estrellas inactivas más visibles en oscuro */
+body.dark-mode .star {
+    color: #334155;
 }
 
 .progress-container { background: #e2e8f0; height: 8px; border-radius: 10px; margin: 15px 0; }
@@ -153,6 +203,32 @@ input, select {
 
 .btn-header:active {
     transform: translateY(0);
+}
+
+.btn-group-edit { 
+    position: absolute; 
+    right: 10px; 
+    top: 10px; 
+    display: flex; 
+    gap: 5px; 
+}
+
+.btn-edit-small { 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    padding: 5px 10px; 
+    font-size: 0.7rem; 
+    cursor: pointer; 
+    font-weight: bold;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-edit-small:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05);
 }
 
 /* --- AJUSTES MÓVIL --- */
