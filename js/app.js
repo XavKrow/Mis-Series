@@ -70,7 +70,6 @@ function cargarSeries() {
                 estrellasHtml += `<span class="star ${i <= data.valoracion ? 'active' : ''}" onclick="cambiarEstrellas('${id}', ${i})">★</span>`;
             }
 
-            // ESTRUCTURA ACTUALIZADA PARA EL DISEÑO PREMIUM
             container.innerHTML += `
                 <div class="card ${estado}" data-fecha="${data.timestamp || 0}">
                     <img src="${data.imagen || 'https://via.placeholder.com/300x450?text=Sin+Portada'}" class="card-img">
@@ -83,8 +82,8 @@ function cargarSeries() {
                         
                         <div class="temp-info">
                             <div class="btn-group-edit">
-                                <button class="btn-edit-small" style="background:var(--orange)" onclick="editarUltimaTemp('${id}')">+1 Cap</button>
-                                <button class="btn-edit-small" style="background:var(--dark)" onclick="agregarTemporada('${id}')">+ Temp</button>
+                                <button class="btn-edit-small" onclick="editarUltimaTemp('${id}')">+1 CAP</button>
+                                <button class="btn-edit-small" onclick="agregarTemporada('${id}')">+ TEMP</button>
                             </div>
                             <b>Temporada ${data.tempActual} / ${data.mapaCapitulos.length}</b><br>
                             <span>Cap: ${data.capActual} / ${capsDeEstaTemp}</span>
