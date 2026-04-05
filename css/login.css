@@ -1,52 +1,78 @@
+/* login.css */
+:root {
+    --brand: #6366f1; /* Un violeta moderno */
+    --bg-dark: #0f172a; /* Azul noche profundo */
+    --card-bg: #1e293b;
+    --input-bg: #334155;
+    --text-light: #f8fafc;
+}
+
 body { 
-    font-family: 'Segoe UI', sans-serif; 
-    background: #2c3e50; 
+    font-family: 'Inter', 'Segoe UI', sans-serif; 
+    background: var(--bg-dark); 
     display: flex; 
     justify-content: center; 
     align-items: center; 
     height: 100vh; 
     margin: 0; 
-    color: white; 
+    color: var(--text-light); 
 }
 
 .login-card { 
-    background: #34495e; 
-    padding: 2rem; 
-    border-radius: 15px; 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-    width: 350px; 
-    text-align: center; 
+    background: var(--card-bg); 
+    padding: 3rem 2rem; 
+    border-radius: 24px; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+    width: 380px; 
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-h1 { margin-bottom: 1.5rem; color: #3498db; }
+h1 { margin-bottom: 2rem; font-weight: 800; letter-spacing: -1px; color: var(--text-light); }
 
 input { 
     width: 100%; 
-    padding: 12px; 
-    margin: 10px 0; 
-    border-radius: 5px; 
-    border: none; 
-    box-sizing: border-box; 
-    font-size: 16px; /* Evita zoom en móviles */
+    padding: 14px; 
+    margin: 12px 0; 
+    border-radius: 12px; 
+    border: 1px solid transparent;
+    background: var(--input-bg);
+    color: white;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: #1e293b;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
 }
 
 button { 
     width: 100%; 
-    padding: 12px; 
-    background: #27ae60; 
+    padding: 14px; 
+    background: var(--brand); 
     border: none; 
     color: white; 
-    border-radius: 5px; 
+    border-radius: 12px; 
     cursor: pointer; 
-    font-weight: bold; 
-    margin-top: 10px; 
+    font-weight: 700; 
+    margin-top: 20px;
+    transition: 0.3s;
 }
 
-button:hover { background: #2ecc71; }
+button:hover { 
+    background: #4f46e5;
+    transform: translateY(-2px);
+}
 
 .toggle-link { 
-    margin-top: 15px; 
-    font-size: 0.9rem; 
+    margin-top: 20px; 
+    font-size: 0.85rem; 
     cursor: pointer; 
-    color: #bdc3c7; 
+    color: #94a3b8; 
+    transition: 0.3s;
 }
+
+.toggle-link:hover { color: var(--brand); }

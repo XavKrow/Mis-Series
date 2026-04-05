@@ -70,34 +70,43 @@ function cargarSeries() {
                 estrellasHtml += `<span class="star ${i <= data.valoracion ? 'active' : ''}" onclick="cambiarEstrellas('${id}', ${i})">★</span>`;
             }
 
+            // ESTRUCTURA ACTUALIZADA PARA EL DISEÑO PREMIUM
             container.innerHTML += `
                 <div class="card ${estado}" data-fecha="${data.timestamp || 0}">
                     <img src="${data.imagen || 'https://via.placeholder.com/300x450?text=Sin+Portada'}" class="card-img">
-                    <div style="display:flex; justify-content:space-between; align-items:start;">
-                        <h3>${data.nombre}</h3>
-                        <span class="status-badge">${estado}</span>
-                    </div>
-                    <div class="temp-info">
-                        <div class="btn-group-edit">
-                            <button class="btn-edit-small" style="background:var(--orange)" onclick="editarUltimaTemp('${id}')">+1 Cap Meta</button>
-                            <button class="btn-edit-small" style="background:var(--dark)" onclick="agregarTemporada('${id}')">+ Temp</button>
+                    
+                    <div class="card-content">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <h3>${data.nombre}</h3>
+                            <span class="status-badge">${estado}</span>
                         </div>
-                        <b>Temp ${data.tempActual} / ${data.mapaCapitulos.length}</b><br>
-                        <span>Cap: ${data.capActual} / ${capsDeEstaTemp}</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${porcentaje}%"></div>
-                    </div>
-                    <div class="stars-container">${estrellasHtml}</div>
-                    <div class="controls">
-                        <button class="btn-cap" onclick="modificarProgreso('${id}', -1)">-</button>
-                        <div style="text-align:center">
-                            <span class="pct-text" style="font-weight:bold; display:block;">${porcentaje}%</span>
-                            <small>${data.vistosGlobal}/${data.totalCapsSerie}</small>
+                        
+                        <div class="temp-info">
+                            <div class="btn-group-edit">
+                                <button class="btn-edit-small" style="background:var(--orange)" onclick="editarUltimaTemp('${id}')">+1 Cap</button>
+                                <button class="btn-edit-small" style="background:var(--dark)" onclick="agregarTemporada('${id}')">+ Temp</button>
+                            </div>
+                            <b>Temporada ${data.tempActual} / ${data.mapaCapitulos.length}</b><br>
+                            <span>Cap: ${data.capActual} / ${capsDeEstaTemp}</span>
                         </div>
-                        <button class="btn-cap" onclick="modificarProgreso('${id}', 1)">+</button>
+
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${porcentaje}%"></div>
+                        </div>
+
+                        <div class="stars-container">${estrellasHtml}</div>
+                        
+                        <div class="controls">
+                            <button class="btn-cap" onclick="modificarProgreso('${id}', -1)">-</button>
+                            <div style="text-align:center">
+                                <span class="pct-text" style="font-weight:800; display:block; font-size: 1.2rem;">${porcentaje}%</span>
+                                <small style="color: var(--text-muted);">${data.vistosGlobal}/${data.totalCapsSerie}</small>
+                            </div>
+                            <button class="btn-cap" onclick="modificarProgreso('${id}', 1)">+</button>
+                        </div>
+                        
+                        <button onclick="eliminarSerie('${id}')" style="border:none; background:none; cursor:pointer; width:100%; margin-top:20px; font-size:0.75rem; color:var(--text-muted); text-decoration: underline;">Eliminar de mi lista</button>
                     </div>
-                    <button onclick="eliminarSerie('${id}')" style="border:none; background:none; cursor:pointer; width:100%; margin-top:15px; font-size:0.8rem; color:#888;">Eliminar Serie</button>
                 </div>`;
         });
         ordenarSeries();
