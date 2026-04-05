@@ -101,12 +101,16 @@
     </section>
 
     <div class="search-container">
-        <input type="text" id="search-bar" placeholder="🔍 Buscar serie..." onkeyup="filtrarSeries()">
+        <input type="text" id="search-bar" placeholder="Buscar serie..." onkeyup="filtrarSeries()">
         <select id="sort-filter" onchange="ordenarSeries()">
             <option value="recientes">Nuevas primero</option>
+            <option value="antiguas">Más antiguas</option>
             <option value="nombre">Nombre (A-Z)</option>
-            <option value="progreso">Más avance</option>
-            <option value="valoracion">Mejor puntuadas</option>
+            <option value="nombre-rev">Nombre (Z-A)</option>
+            <option value="progreso-max">Más avance (%)</option>
+            <option value="progreso-min">Menos avance (%)</option>
+            <option value="valoracion">Mejor puntuadas ★</option>
+            <option value="capitulos">Más capítulos totales</option>
         </select>
     </div>
 
@@ -242,6 +246,7 @@
             if(tarjetas.length === 0) return;
 
             tarjetas.sort((a, b) => {
+                // Extraer datos de las tarjetas
                 const nombreA = a.querySelector('h3').innerText.toLowerCase();
                 const nombreB = b.querySelector('h3').innerText.toLowerCase();
                 const pctA = parseInt(a.querySelector('.pct-text').innerText);
@@ -250,14 +255,25 @@
                 const estrellasB = b.querySelectorAll('.star.active').length;
                 const fechaA = parseInt(a.dataset.fecha);
                 const fechaB = parseInt(b.dataset.fecha);
+        
+                // Extraer total de capítulos (del texto "vistos/total")
+                const totalA = parseInt(a.querySelector('small').innerText.split('/')[1]);
+                const totalB = parseInt(b.querySelector('small').innerText.split('/')[1]);
 
-                if (criterio === 'nombre') return nombreA.localeCompare(nombreB);
-                if (criterio === 'progreso') return pctB - pctA;
-                if (criterio === 'valoracion') return estrellasB - estrellasA;
-                return fechaB - fechaA; // Recientes por defecto
+                switch (criterio) {
+                    case 'nombre': return nombreA.localeCompare(nombreB);
+                    case 'nombre-rev': return nombreB.localeCompare(nombreA);
+                    case 'progreso-max': return pctB - pctA;
+                    case 'progreso-min': return pctA - pctB;
+                    case 'valoracion': return estrellasB - estrellasA;
+                    case 'capitulos': return totalB - totalA;
+                    case 'antiguas': return fechaA - fechaB;
+                    default: return fechaB - fechaA; // recientes
+                }
             });
 
-            tarjetas.forEach(t => container.appendChild(t));
+        // Aplicar el nuevo orden visualmente
+        tarjetas.forEach(t => container.appendChild(t));
         };
 
         window.modificarProgreso = async (id, cambio) => {
