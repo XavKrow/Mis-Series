@@ -92,25 +92,44 @@ body.dark-mode .temp-info { background: rgba(255, 255, 255, 0.05); }
 .btn-edit-small[onclick*="editarUltimaTemp"] { background: var(--warning); }
 .btn-edit-small[onclick*="agregarTemporada"] { background: var(--dark); }
 
-/* --- PROGRESO Y CONTROLES (+ / -) --- */
+/* --- PROGRESO Y CONTROLES --- */
 .progress-container { background: #e2e8f0; height: 8px; border-radius: 10px; margin: 15px 0; }
 .progress-bar { background: var(--success); height: 100%; border-radius: 10px; }
 
-.controls { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-top: 15px; 
-    gap: 10px; 
-}
+.controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; gap: 10px; }
 
 .btn-cap { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; }
 
 /* --- ESTRELLAS --- */
 .star { font-size: 1.5rem; color: #cbd5e1; transition: 0.2s; cursor: pointer; }
-body.dark-mode .star { color: #475569; } /* Color mejorado para modo oscuro */
+body.dark-mode .star { color: #475569; }
 .star.active { color: var(--warning); text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
 
+/* --- NUEVAS ACCIONES DE LA TARJETA (EDITAR/ELIMINAR) --- */
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-flat {
+    border: none;
+    background: none;
+    cursor: pointer;
+    flex: 1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: 0.3s;
+}
+
+.btn-edit { color: var(--primary); }
+.btn-delete { color: var(--text-muted); }
+.btn-flat:hover { opacity: 0.7; transform: scale(1.02); }
+
+/* --- AJUSTES MÓVIL --- */
 @media (max-width: 600px) {
     header { flex-direction: column; padding: 1.5rem; gap: 15px; }
     .header-controls { width: 100%; justify-content: center; }

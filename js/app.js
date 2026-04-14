@@ -22,10 +22,15 @@ if (localStorage.getItem('darkMode') === 'true') {
 }
 
 onAuthStateChanged(auth, (user) => {
-    if (user) { currentUser = user; cargarSeries(); } 
-    else { window.location.href = "index.html"; }
+    if (user) { 
+        currentUser = user; 
+        cargarSeries(); 
+    } else { 
+        window.location.href = "index.html"; 
+    }
 });
 
+// --- GUARDAR NUEVA SERIE ---
 document.getElementById('btn-save').onclick = async () => {
     const nombre = document.getElementById('serie-name').value;
     const mapaTexto = document.getElementById('serie-map').value;
@@ -53,8 +58,7 @@ document.getElementById('btn-save').onclick = async () => {
     }
 };
 
-// ... (Toda tu configuración de Firebase arriba)
-
+// --- CARGAR Y RENDERIZAR SERIES ---
 function cargarSeries() {
     const q = query(collection(db, "series"), where("userId", "==", currentUser.uid));
     onSnapshot(q, (snapshot) => {
@@ -80,6 +84,7 @@ function cargarSeries() {
                             <h3>${data.nombre}</h3>
                             <span class="status-badge">${estado}</span>
                         </div>
+                        
                         <div class="temp-info">
                             <div class="btn-group-edit">
                                 <button class="btn-edit-small" onclick="editarUltimaTemp('${id}')">+1 CAP</button>
@@ -88,10 +93,13 @@ function cargarSeries() {
                             <b>Temporada ${data.tempActual} / ${data.mapaCapitulos.length}</b><br>
                             <span>Cap: ${data.capActual} / ${capsDeEstaTemp}</span>
                         </div>
+
                         <div class="progress-container">
                             <div class="progress-bar" style="width: ${porcentaje}%"></div>
                         </div>
+
                         <div class="stars-container">${estrellasHtml}</div>
+                        
                         <div class="controls">
                             <button class="btn-cap" onclick="modificarProgreso('${id}', -1)">-</button>
                             <div style="text-align:center">
@@ -100,13 +108,23 @@ function cargarSeries() {
                             </div>
                             <button class="btn-cap" onclick="modificarProgreso('${id}', 1)">+</button>
                         </div>
-                        <button onclick="eliminarSerie('${id}')" style="border:none; background:none; cursor:pointer; width:100%; margin-top:15px; font-size:0.75rem; color:var(--text-muted); text-decoration:underline;">Eliminar de mi lista</button>
+
+                        <div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid var(--border-color);">
+                            <button onclick="abrirModalEdicion('${id}')" style="border:none; background:none; cursor:pointer; flex:1; font-size:0.75rem; color:var(--primary); text-decoration:underline; font-weight:700;">
+                                Editar serie
+                            </button>
+                            <button onclick="eliminarSerie('${id}')" style="border:none; background:none; cursor:pointer; flex:1; font-size:0.75rem; color:var(--text-muted); text-decoration:underline;">
+                                Eliminar
+                            </button>
+                        </div>
                     </div>
                 </div>`;
         });
         ordenarSeries();
     });
 }
+
+// --- FUNCIONES GLOBALES (Expuestas a Window) ---
 
 window.toggleDarkMode = () => {
     document.body.classList.toggle('dark-mode');
@@ -195,6 +213,24 @@ window.editarUltimaTemp = async (id) => {
     }
 };
 
+window.abrirModalEdicion = async (id) => {
+    const docRef = doc(db, "series", id);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const data = snap.data();
+
+    const nuevoNombre = prompt("Nuevo nombre de la serie:", data.nombre);
+    const nuevaImagen = prompt("Nueva URL de la imagen:", data.imagen);
+
+    // Solo actualiza si el usuario no canceló el prompt
+    if (nuevoNombre !== null && nuevaImagen !== null) {
+        await updateDoc(docRef, {
+            nombre: nuevoNombre,
+            imagen: nuevaImagen
+        });
+    }
+};
+
 window.cambiarEstrellas = async (id, n) => { await updateDoc(doc(db, "series", id), { valoracion: n }); };
 window.eliminarSerie = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "series", id)); };
-window.logout = () => signOut(auth);
+window.logout = () => signOut(auth); // Corrección: Ahora expuesta a window
