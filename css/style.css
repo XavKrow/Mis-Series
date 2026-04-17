@@ -280,21 +280,25 @@ body.dark-mode .star { color: #475569; }
     }
 
     .temp-info b {
+        font-size: 0.7rem;
         display: block;
-        font-size: 0.65rem;
         margin-bottom: 2px;
+    }
+    
+    .temp-info span {
+        font-size: 0.65rem;
     }
 
     /* Botones naranjas y grises más compactos */
     .btn-edit-small {
-        padding: 3px 6px;
-        font-size: 0.55rem;
+        padding: 4px 6px;
+        font-size: 0.55rem; 
         border-radius: 4px;
     }
 
     .btn-group-edit {
         right: 5px;
-        top: 5px;
+        top: 8px;
         gap: 3px;
     }
 
