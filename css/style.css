@@ -238,13 +238,16 @@ body.dark-mode .star { color: #475569; }
 @media (max-width: 600px) {
     header { 
         flex-direction: column; 
-        padding: 1rem; 
-        gap: 12px; 
+        padding: 1.2rem; 
+        gap: 15px; 
     }
     
-    .header-controls { width: 100%; justify-content: center; }
+    .header-controls { 
+        width: 100%; 
+        justify-content: center; 
+    }
 
-    /* Forzamos 2 columnas en móvil */
+    /* Vista de 2 columnas */
     .grid { 
         grid-template-columns: repeat(2, 1fr); 
         gap: 12px; 
@@ -252,34 +255,75 @@ body.dark-mode .star { color: #475569; }
     }
 
     .card {
-        border-radius: 12px; 
+        border-radius: 14px; 
     }
+
     .card-img {
-        height: 160px; 
+        height: 150px; 
     }
 
     .card h3 { 
-        font-size: 1rem; 
+        font-size: 0.95rem; 
         white-space: nowrap; 
         overflow: hidden; 
         text-overflow: ellipsis;
+        margin-bottom: 5px;
     }
 
-    .card-content { padding: 12px; }
+    .card-content { padding: 10px; }
 
+    /* Ajuste de info de temporada para evitar colisiones */
+    .temp-info { 
+        padding: 8px; 
+        font-size: 0.7rem; 
+        margin: 10px 0;
+    }
+
+    .temp-info b {
+        display: block;
+        font-size: 0.65rem;
+        margin-bottom: 2px;
+    }
+
+    /* Botones naranjas y grises más compactos */
+    .btn-edit-small {
+        padding: 3px 6px;
+        font-size: 0.55rem;
+        border-radius: 4px;
+    }
+
+    .btn-group-edit {
+        right: 5px;
+        top: 5px;
+        gap: 3px;
+    }
+
+    /* Controles de progreso (+ / -) */
     .btn-cap { 
-        width: 32px; 
-        height: 32px; 
-        font-size: 1rem; 
+        width: 30px; 
+        height: 30px; 
+        font-size: 0.9rem; 
+        border-radius: 8px;
     }
 
-    .pct-text { font-size: 0.9rem !important; }
+    .pct-text { font-size: 0.85rem !important; }
+    
+    small { font-size: 0.65rem; }
 
+    /* Estrellas escaladas */
+    .star { font-size: 1.1rem; }
+
+    /* Acciones finales en columna para que no se encimen */
     .card-actions {
         flex-direction: column;
-        gap: 5px;
+        gap: 8px;
+        padding-top: 10px;
         text-align: center;
     }
-    
-    .temp-info { padding: 8px; font-size: 0.75rem; }
+
+    .btn-flat {
+        width: 100%;
+        font-size: 0.7rem;
+        padding: 4px 0;
+    }
 }
