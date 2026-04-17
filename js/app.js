@@ -44,7 +44,7 @@ document.getElementById('btn-save').onclick = async () => {
             userId: currentUser.uid,
             nombre: nombre,
             mapaCapitulos: mapaCapitulos,
-            imagen: urlImg || "https://via.placeholder.com/300x450?text=Sin+Portada",
+            imagen: urlImg || "https://placehold.co/300x450/1e293b/white?text=Sin+Portada",
             tempActual: 1,
             capActual: 0,
             vistosGlobal: 0,
@@ -78,7 +78,7 @@ function cargarSeries() {
 
             container.innerHTML += `
                 <div class="card ${estado}" data-fecha="${data.timestamp || 0}">
-                    <img src="${data.imagen || 'https://via.placeholder.com/300x450?text=Sin+Portada'}" class="card-img">
+                    <img src="${data.imagen || 'https://placehold.co/300x450/1e293b/white?text=Sin+Portada'}" class="card-img">
                     <div class="card-content">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <h3>${data.nombre}</h3>
@@ -213,22 +213,58 @@ window.editarUltimaTemp = async (id) => {
     }
 };
 
+// Variable global para saber qué serie estamos editando
+let editId = null;
+
 window.abrirModalEdicion = async (id) => {
+    editId = id;
     const docRef = doc(db, "series", id);
     const snap = await getDoc(docRef);
-    if (!snap.exists()) return;
     const data = snap.data();
 
-    const nuevoNombre = prompt("Nuevo nombre de la serie:", data.nombre);
-    const nuevaImagen = prompt("Nueva URL de la imagen:", data.imagen);
+    // Rellenar los campos del modal con la info actual
+    document.getElementById('edit-name').value = data.nombre;
+    document.getElementById('edit-img').value = data.imagen;
+    document.getElementById('edit-map').value = data.mapaCapitulos.join(', ');
 
-    // Solo actualiza si el usuario no canceló el prompt
-    if (nuevoNombre !== null && nuevaImagen !== null) {
+    // Mostrar el modal
+    document.getElementById('edit-modal').style.display = 'flex';
+};
+
+window.cerrarModal = () => {
+    document.getElementById('edit-modal').style.display = 'none';
+    editId = null;
+};
+
+// Acción de guardar dentro del modal
+document.getElementById('btn-update-confirm').onclick = async () => {
+    if (!editId) return;
+
+    const nuevoNombre = document.getElementById('edit-name').value;
+    const nuevaImg = document.getElementById('edit-img').value;
+    const nuevoMapaTxt = document.getElementById('edit-map').value;
+
+    if (nuevoNombre && nuevoMapaTxt) {
+        const nuevoMapa = nuevoMapaTxt.split(',').map(n => parseInt(n.trim()));
+        const nuevoTotal = nuevoMapa.reduce((a, b) => a + b, 0);
+
+        const docRef = doc(db, "series", editId);
         await updateDoc(docRef, {
             nombre: nuevoNombre,
-            imagen: nuevaImagen
+            imagen: nuevaImg,
+            mapaCapitulos: nuevoMapa,
+            totalCapsSerie: nuevoTotal
         });
+
+        cerrarModal();
+        alert("¡Serie actualizada!");
     }
+};
+
+// Cerrar modal si hacen clic fuera del cuadro blanco
+window.onclick = (event) => {
+    const modal = document.getElementById('edit-modal');
+    if (event.target == modal) cerrarModal();
 };
 
 window.cambiarEstrellas = async (id, n) => { await updateDoc(doc(db, "series", id), { valoracion: n }); };

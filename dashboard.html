@@ -40,6 +40,25 @@
 
     <main class="grid" id="series-container"></main>
 
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Editar Serie</h2>
+            <div class="modal-inputs">
+                <label>Nombre de la serie</label>
+                <input type="text" id="edit-name">
+                
+                <label>URL del Póster</label>
+                <input type="text" id="edit-img">
+                
+                <label>Capítulos por temporada (separados por coma)</label>
+                <input type="text" id="edit-map" placeholder="ej: 8, 10, 8">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-save-modal" id="btn-update-confirm">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
     <script type="module" src="./js/app.js"></script>
 </body>
 </html>
