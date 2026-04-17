@@ -247,20 +247,16 @@ body.dark-mode .star { color: #475569; }
         justify-content: center; 
     }
 
-    /* Vista de 2 columnas */
+    /* Cuadrícula compacta de 2 columnas */
     .grid { 
         grid-template-columns: repeat(2, 1fr); 
         gap: 12px; 
         padding: 12px; 
     }
 
-    .card {
-        border-radius: 14px; 
-    }
+    .card { border-radius: 14px; }
 
-    .card-img {
-        height: 150px; 
-    }
+    .card-img { height: 150px; }
 
     .card h3 { 
         font-size: 0.95rem; 
@@ -272,11 +268,34 @@ body.dark-mode .star { color: #475569; }
 
     .card-content { padding: 10px; }
 
-    /* Ajuste de info de temporada para evitar colisiones */
+    /* --- REESTRUCTURACIÓN DE INFO DE TEMPORADA --- */
     .temp-info { 
-        padding: 8px; 
+        display: flex;
+        flex-direction: column; /* Botones arriba, texto abajo */
+        align-items: center; 
+        text-align: center;
+        padding: 10px 5px; 
         font-size: 0.7rem; 
         margin: 10px 0;
+        position: relative; 
+    }
+
+    .btn-group-edit {
+        position: static;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        gap: 5px;
+        margin-bottom: 8px; 
+    }
+
+    .btn-edit-small {
+        flex: 1; 
+        max-width: 70px;
+        padding: 5px 0;
+        font-size: 0.55rem; 
+        border-radius: 6px;
+        text-align: center;
     }
 
     .temp-info b {
@@ -285,49 +304,35 @@ body.dark-mode .star { color: #475569; }
         margin-bottom: 2px;
     }
     
-    .temp-info span {
-        font-size: 0.65rem;
-    }
+    .temp-info span { font-size: 0.65rem; }
 
-    /* Botones naranjas y grises más compactos */
-    .btn-edit-small {
-        padding: 4px 6px;
-        font-size: 0.55rem; 
-        border-radius: 4px;
-    }
-
-    .btn-group-edit {
-        right: 5px;
-        top: 8px;
-        gap: 3px;
-    }
-
-    /* Controles de progreso (+ / -) */
+    /* --- CONTROLES DE PROGRESO (+ / -) --- */
     .btn-cap { 
-        width: 30px; 
-        height: 30px; 
+        width: 32px; 
+        height: 32px; 
         font-size: 0.9rem; 
         border-radius: 8px;
     }
 
     .pct-text { font-size: 0.85rem !important; }
-    
     small { font-size: 0.65rem; }
 
     /* Estrellas escaladas */
     .star { font-size: 1.1rem; }
 
-    /* Acciones finales en columna para que no se encimen */
-    .card-actions {
-        flex-direction: column;
-        gap: 8px;
+    /* Acciones finales (Editar/Eliminar) en columna */
+    .card-actions, 
+    div[style*="margin-top:20px"] { /* Selecciona el contenedor de Editar/Eliminar */
+        flex-direction: column !important;
+        gap: 10px !important;
         padding-top: 10px;
         text-align: center;
     }
 
-    .btn-flat {
+    .card-actions button, 
+    div[style*="margin-top:20px"] button {
         width: 100%;
-        font-size: 0.7rem;
-        padding: 4px 0;
+        font-size: 0.75rem !important;
+        padding: 5px 0;
     }
 }
