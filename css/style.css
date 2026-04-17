@@ -209,9 +209,53 @@ body.dark-mode .star { color: #475569; }
     to { opacity: 1; transform: translateY(0); }
 }
 
+#quick-modal-input {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
 /* --- AJUSTES MÓVIL --- */
 @media (max-width: 600px) {
-    header { flex-direction: column; padding: 1.5rem; gap: 15px; }
+    header { 
+        flex-direction: column; 
+        padding: 1rem; 
+        gap: 12px; 
+    }
+    
     .header-controls { width: 100%; justify-content: center; }
-    .grid { grid-template-columns: 1fr; padding: 15px; }
+
+    /* Forzamos 2 columnas en móvil */
+    .grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+        padding: 12px; 
+    }
+
+    .card h3 { 
+        font-size: 1rem; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis;
+    }
+
+    .card-content { padding: 12px; }
+
+    .btn-cap { 
+        width: 32px; 
+        height: 32px; 
+        font-size: 1rem; 
+    }
+
+    .pct-text { font-size: 0.9rem !important; }
+
+    .card-actions {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    .temp-info { padding: 8px; font-size: 0.75rem; }
 }

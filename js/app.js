@@ -188,29 +188,63 @@ window.modificarProgreso = async (id, cambio) => {
     await updateDoc(docRef, { capActual, tempActual, vistosGlobal });
 };
 
-window.agregarTemporada = async (id) => {
-    const nuevosCaps = prompt("¿Cuántos capítulos tiene la nueva temporada?");
-    if (nuevosCaps && !isNaN(nuevosCaps)) {
-        const docRef = doc(db, "series", id);
-        const snap = await getDoc(docRef);
-        const d = snap.data();
-        const nuevoMapa = [...d.mapaCapitulos, parseInt(nuevosCaps)];
-        await updateDoc(docRef, { mapaCapitulos: nuevoMapa, totalCapsSerie: d.totalCapsSerie + parseInt(nuevosCaps) });
+let quickActionType = ""; // Para saber qué estamos haciendo (temp o caps)
+let currentSerieId = "";
+
+// Función para abrir el modal rápido
+window.abrirQuickModal = (id, tipo, titulo, etiqueta, valorInicial) => {
+    currentSerieId = id;
+    quickActionType = tipo;
+    document.getElementById('quick-modal-title').innerText = titulo;
+    document.getElementById('quick-modal-label').innerText = etiqueta;
+    document.getElementById('quick-modal-input').value = valorInicial;
+    document.getElementById('quick-modal-input').placeholder = valorInicial;
+    document.getElementById('quick-modal').style.display = 'flex';
+};
+
+window.cerrarQuickModal = () => {
+    document.getElementById('quick-modal').style.display = 'none';
+};
+
+// Acción al confirmar en el modal rápido
+document.getElementById('btn-quick-confirm').onclick = async () => {
+    const valor = parseInt(document.getElementById('quick-modal-input').value);
+    if (isNaN(valor) || valor < 0) return alert("Ingresa un número válido");
+
+    const docRef = doc(db, "series", currentSerieId);
+    const snap = await getDoc(docRef);
+    const d = snap.data();
+
+    if (quickActionType === "nuevaTemp") {
+        const nuevoMapa = [...d.mapaCapitulos, valor];
+        await updateDoc(docRef, { 
+            mapaCapitulos: nuevoMapa, 
+            totalCapsSerie: d.totalCapsSerie + valor 
+        });
+    } 
+    else if (quickActionType === "editarTemp") {
+        let nuevoMapa = [...d.mapaCapitulos];
+        const ultimaPos = nuevoMapa.length - 1;
+        const diferencia = valor - nuevoMapa[ultimaPos];
+        nuevoMapa[ultimaPos] = valor;
+        await updateDoc(docRef, { 
+            mapaCapitulos: nuevoMapa, 
+            totalCapsSerie: d.totalCapsSerie + diferencia 
+        });
     }
+
+    cerrarQuickModal();
+};
+
+// REEMPLAZA tus antiguas funciones por estas llamadas:
+window.agregarTemporada = (id) => {
+    abrirQuickModal(id, "nuevaTemp", "Nueva Temporada", "¿Cuántos capítulos tiene?", 10);
 };
 
 window.editarUltimaTemp = async (id) => {
-    const docRef = doc(db, "series", id);
-    const snap = await getDoc(docRef);
-    const d = snap.data();
-    let nuevoMapa = [...d.mapaCapitulos];
-    const ultimaPos = nuevoMapa.length - 1;
-    const nuevoValor = prompt(`La temp actual tiene ${nuevoMapa[ultimaPos]} caps. ¿Nuevo total?`, nuevoMapa[ultimaPos] + 1);
-    if (nuevoValor && !isNaN(nuevoValor)) {
-        const diferencia = parseInt(nuevoValor) - nuevoMapa[ultimaPos];
-        nuevoMapa[ultimaPos] = parseInt(nuevoValor);
-        await updateDoc(docRef, { mapaCapitulos: nuevoMapa, totalCapsSerie: d.totalCapsSerie + diferencia });
-    }
+    const snap = await getDoc(doc(db, "series", id));
+    const actual = snap.data().mapaCapitulos.slice(-1)[0];
+    abrirQuickModal(id, "editarTemp", "Editar Capítulos", "Nuevo total de la temporada:", actual);
 };
 
 // Variable global para saber qué serie estamos editando
@@ -263,9 +297,24 @@ document.getElementById('btn-update-confirm').onclick = async () => {
 
 // Cerrar modal si hacen clic fuera del cuadro blanco
 window.onclick = (event) => {
-    const modal = document.getElementById('edit-modal');
-    if (event.target == modal) cerrarModal();
+    const editModal = document.getElementById('edit-modal');
+    const quickModal = document.getElementById('quick-modal');
+    
+    if (event.target == editModal) {
+        cerrarModal();
+    }
+        if (event.target == quickModal) {
+        cerrarQuickModal();
+    }
 };
+
+// Cerrar modales con la tecla Escape
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        cerrarModal();
+        cerrarQuickModal();
+    }
+});
 
 window.cambiarEstrellas = async (id, n) => { await updateDoc(doc(db, "series", id), { valoracion: n }); };
 window.eliminarSerie = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "series", id)); };
