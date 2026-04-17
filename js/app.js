@@ -317,5 +317,32 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.cambiarEstrellas = async (id, n) => { await updateDoc(doc(db, "series", id), { valoracion: n }); };
-window.eliminarSerie = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "series", id)); };
+
+window.eliminarSerie = async (id) => {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--danger)',
+        cancelButtonColor: 'var(--text-muted)',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: 'var(--card-bg)',
+        color: 'var(--text-main)'
+    });
+
+    if (result.isConfirmed) {
+        await deleteDoc(doc(db, "series", id));
+        Swal.fire({
+            title: '¡Eliminado!',
+            icon: 'success',
+            background: 'var(--card-bg)',
+            color: 'var(--text-main)',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+};
+
 window.logout = () => signOut(auth); // Corrección: Ahora expuesta a window
