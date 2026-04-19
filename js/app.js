@@ -122,8 +122,8 @@ function cargarSeries() {
 // --- FUNCIONES GLOBALES ---
 
 window.toggleDarkMode = () => {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    const isDark = document.documentElement.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
 };
 
 window.filtrarSeries = () => {
