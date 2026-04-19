@@ -1,5 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signOut, 
+    sendPasswordResetEmail,
+    setPersistence,
+    browserLocalPersistence 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, where, onSnapshot, updateDoc, doc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -17,18 +24,46 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 let currentUser = null;
 
-if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-}
-
 onAuthStateChanged(auth, (user) => {
     if (user) { 
         currentUser = user; 
         cargarSeries(); 
     } else { 
-        window.location.href = "index.html"; 
+        // Si no hay usuario y no estamos en el login, redirigir
+        if (!window.location.pathname.includes('index.html')) {
+            window.location.href = "index.html"; 
+        }
     }
 });
+
+// Función para recuperar contraseña (usando SweetAlert2)
+window.recuperarPassword = async () => {
+    const { value: email } = await Swal.fire({
+        title: 'Recuperar Contraseña',
+        input: 'email',
+        inputLabel: 'Tu correo electrónico',
+        inputPlaceholder: 'escribe@tu.correo',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--primary)',
+        background: 'var(--card-bg)',
+        color: 'var(--text-main)'
+    });
+
+    if (email) {
+        try {
+            await sendPasswordResetEmail(auth, email);
+            Swal.fire({
+                title: '¡Correo enviado!',
+                text: 'Revisa tu bandeja de entrada o spam.',
+                icon: 'success',
+                background: 'var(--card-bg)',
+                color: 'var(--text-main)'
+            });
+        } catch (error) {
+            Swal.fire('Error', 'No pudimos encontrar ese correo.', 'error');
+        }
+    }
+};
 
 // --- GUARDAR NUEVA SERIE ---
 document.getElementById('btn-save').onclick = async () => {
@@ -36,7 +71,7 @@ document.getElementById('btn-save').onclick = async () => {
     const mapaTexto = document.getElementById('serie-map').value;
     const urlImg = document.getElementById('serie-img').value;
 
-    if(nombre && mapaTexto) {
+    if(nombre && mapaTexto && currentUser) {
         const mapaCapitulos = mapaTexto.split(',').map(n => parseInt(n.trim()));
         const totalCapsSerie = mapaCapitulos.reduce((a, b) => a + b, 0);
 
@@ -291,7 +326,15 @@ document.getElementById('btn-update-confirm').onclick = async () => {
         });
 
         cerrarModal();
-        alert("¡Serie actualizada!");
+        Swal.fire({
+            title: '¡Actualizado!',
+            text: 'Los cambios se guardaron correctamente',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            background: 'var(--card-bg)',
+            color: 'var(--text-main)'
+        });
     }
 };
 
@@ -300,12 +343,8 @@ window.onclick = (event) => {
     const editModal = document.getElementById('edit-modal');
     const quickModal = document.getElementById('quick-modal');
     
-    if (event.target == editModal) {
-        cerrarModal();
-    }
-        if (event.target == quickModal) {
-        cerrarQuickModal();
-    }
+    if (event.target == editModal) cerrarModal();
+    if (event.target == quickModal) cerrarQuickModal();
 };
 
 // Cerrar modales con la tecla Escape
