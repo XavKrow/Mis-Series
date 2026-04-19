@@ -41,12 +41,18 @@ window.recuperarPassword = async () => {
     const { value: email } = await Swal.fire({
         title: 'Recuperar Contraseña',
         input: 'email',
-        inputLabel: 'Tu correo electrónico',
-        inputPlaceholder: 'escribe@tu.correo',
+        inputLabel: 'Ingresa tu correo electrónico',
+        inputPlaceholder: 'ejemplo@correo.com',
         showCancelButton: true,
+        confirmButtonText: 'Enviar enlace',
+        cancelButtonText: 'Cancelar',
         confirmButtonColor: 'var(--primary)',
         background: 'var(--card-bg)',
-        color: 'var(--text-main)'
+        color: 'var(--text-main)',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        }
     });
 
     if (email) {
@@ -54,13 +60,23 @@ window.recuperarPassword = async () => {
             await sendPasswordResetEmail(auth, email);
             Swal.fire({
                 title: '¡Correo enviado!',
-                text: 'Revisa tu bandeja de entrada o spam.',
+                text: 'Revisa tu bandeja de entrada (y la carpeta de spam).',
                 icon: 'success',
+                background: 'var(--card-bg)',
+                color: 'var(--text-main)',
+                confirmButtonColor: 'var(--primary)'
+            });
+        } catch (error) {
+            let mensaje = "No pudimos enviar el correo.";
+            if (error.code === 'auth/user-not-found') mensaje = "No hay ninguna cuenta registrada con ese correo.";
+            
+            Swal.fire({
+                title: 'Error',
+                text: mensaje,
+                icon: 'error',
                 background: 'var(--card-bg)',
                 color: 'var(--text-main)'
             });
-        } catch (error) {
-            Swal.fire('Error', 'No pudimos encontrar ese correo.', 'error');
         }
     }
 };

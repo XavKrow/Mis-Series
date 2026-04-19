@@ -237,6 +237,23 @@ input, select { padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; b
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
 }
 
+.login-extras {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.link-forgot {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.link-forgot:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
 /* --- AJUSTES MÓVIL --- */
 @media (max-width: 600px) {
     header { 
