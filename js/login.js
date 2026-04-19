@@ -1,5 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    sendPasswordResetEmail // IMPORTANTE: Agregamos este
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBxdOcs-arbue2ZMw0ov0vwYnsiYcJaWKo",
@@ -18,6 +23,43 @@ const btnAction = document.getElementById('btn-action');
 const toggleAuth = document.getElementById('toggle-auth');
 let isLogin = true;
 
+// Función para recuperar contraseña expuesta a window
+window.recuperarPassword = async () => {
+    const { value: email } = await Swal.fire({
+        title: 'Recuperar Contraseña',
+        input: 'email',
+        inputLabel: 'Tu correo electrónico',
+        inputPlaceholder: 'escribe@tu.correo',
+        showCancelButton: true,
+        confirmButtonText: 'Enviar enlace',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: 'var(--primary)',
+        background: 'var(--card-bg)',
+        color: 'var(--text-main)'
+    });
+
+    if (email) {
+        try {
+            await sendPasswordResetEmail(auth, email);
+            Swal.fire({
+                title: '¡Correo enviado!',
+                text: 'Revisa tu bandeja de entrada o spam.',
+                icon: 'success',
+                background: 'var(--card-bg)',
+                color: 'var(--text-main)'
+            });
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'No pudimos encontrar ese correo o hubo un problema técnico.',
+                icon: 'error',
+                background: 'var(--card-bg)',
+                color: 'var(--text-main)'
+            });
+        }
+    }
+};
+
 toggleAuth.onclick = () => {
     isLogin = !isLogin;
     btnAction.innerText = isLogin ? 'Iniciar Sesión' : 'Registrarse';
@@ -28,11 +70,15 @@ btnAction.onclick = async () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
 
+    if(!email || !pass) {
+        Swal.fire('Atención', 'Por favor llena todos los campos', 'info');
+        return;
+    }
+
     try {
         if (isLogin) {
             await signInWithEmailAndPassword(auth, email, pass);
             
-            // Alerta de Bienvenida
             await Swal.fire({
                 title: '¡Bienvenido de nuevo!',
                 text: 'Accediendo a tu panel...',
@@ -47,7 +93,6 @@ btnAction.onclick = async () => {
         } else {
             await createUserWithEmailAndPassword(auth, email, pass);
             
-            // Alerta de Registro Exitoso
             await Swal.fire({
                 title: '¡Cuenta creada!',
                 text: 'Ya puedes iniciar sesión con tus credenciales.',
@@ -57,16 +102,15 @@ btnAction.onclick = async () => {
                 color: 'var(--text-main)'
             });
             
-            // Opcional: Cambiar a modo login automáticamente o redirigir
             location.reload(); 
         }
     } catch (error) {
-        // Manejo de errores amigable
         let mensajeError = "Hubo un problema al procesar tu solicitud.";
         
         if (error.code === 'auth/wrong-password') mensajeError = "Contraseña incorrecta.";
         if (error.code === 'auth/user-not-found') mensajeError = "No existe una cuenta con este correo.";
         if (error.code === 'auth/email-already-in-use') mensajeError = "Este correo ya está registrado.";
+        if (error.code === 'auth/invalid-credential') mensajeError = "Credenciales inválidas.";
 
         Swal.fire({
             title: 'Error',
