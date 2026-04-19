@@ -33,9 +33,9 @@ window.recuperarPassword = async () => {
         showCancelButton: true,
         confirmButtonText: 'Enviar enlace',
         cancelButtonText: 'Cancelar',
-        confirmButtonColor: 'var(--primary)',
-        background: 'var(--card-bg)',
-        color: 'var(--text-main)'
+        confirmButtonColor: 'var(--brand)',
+        background: 'var(--card-bg)', 
+        color: 'var(--text-light)'
     });
 
     if (email) {
@@ -45,16 +45,18 @@ window.recuperarPassword = async () => {
                 title: '¡Correo enviado!',
                 text: 'Revisa tu bandeja de entrada o spam.',
                 icon: 'success',
+                confirmButtonColor: 'var(--brand)',
                 background: 'var(--card-bg)',
-                color: 'var(--text-main)'
+                color: 'var(--text-light)'
             });
         } catch (error) {
             Swal.fire({
                 title: 'Error',
-                text: 'No pudimos encontrar ese correo o hubo un problema técnico.',
+                text: 'No pudimos encontrar ese correo.',
                 icon: 'error',
+                confirmButtonColor: 'var(--brand)',
                 background: 'var(--card-bg)',
-                color: 'var(--text-main)'
+                color: 'var(--text-light)'
             });
         }
     }

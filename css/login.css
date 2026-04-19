@@ -76,3 +76,19 @@ button:hover {
 }
 
 .toggle-link:hover { color: var(--brand); }
+
+.login-extras {
+    margin-top: 15px;
+}
+
+.link-forgot {
+    font-size: 0.8rem;
+    color: #94a3b8; /* Mismo color que el toggle-link */
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.link-forgot:hover {
+    color: var(--brand);
+    text-decoration: underline;
+}
