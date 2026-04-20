@@ -267,36 +267,39 @@ input, select {
     border-radius: 24px; 
 }
 
-.dark-mode .swal2-popup {
+/* ==========================================================
+   NUEVO: SOPORTE PARA SWEETALERT2 EN MODO OSCURO
+   (Protegiendo tus modales propios con .swal2-container)
+   ========================================================== */
+.dark-mode .swal2-container .swal2-popup {
     background-color: var(--card-bg) !important;
     color: var(--text-main) !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
 }
 
-.dark-mode .swal2-title, 
-.dark-mode .swal2-html-container,
-.dark-mode .swal2-content {
+.dark-mode .swal2-container .swal2-title, 
+.dark-mode .swal2-container .swal2-html-container {
     color: var(--text-main) !important;
 }
 
-.dark-mode .swal2-confirm {
+.dark-mode .swal2-container .swal2-confirm {
     background-color: var(--primary) !important;
     box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3) !important;
 }
 
-.dark-mode .swal2-cancel {
+.dark-mode .swal2-container .swal2-cancel {
     background-color: transparent !important;
     color: var(--text-muted) !important;
     border: 1px solid var(--border-color) !important;
 }
 
-.dark-mode .swal2-icon.swal2-warning {
+.dark-mode .swal2-container .swal2-icon.swal2-warning {
     border-color: var(--warning) !important;
     color: var(--warning) !important;
 }
 
-.dark-mode .swal2-icon.swal2-success {
+.dark-mode .swal2-container .swal2-icon.swal2-success {
     border-color: var(--success) !important;
     color: var(--success) !important;
 }
@@ -329,4 +332,19 @@ input, select {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+#quick-modal-input {
+    width: 100%;
+    box-sizing: border-box; 
+    height: 80px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    background: rgba(99, 102, 241, 0.05);
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    color: var(--primary);
+    outline: none;
+    transition: 0.3s;
 }
