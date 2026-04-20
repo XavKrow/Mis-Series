@@ -292,10 +292,32 @@ document.getElementById('btn-update-confirm').onclick = async () => {
 window.cambiarEstrellas = async (id, n) => await updateDoc(doc(db, "series", id), { valoracion: n });
 
 window.eliminarSerie = async (id) => {
-    const res = await Swal.fire({ title: '¿Eliminar serie?', text: "Esta acción es irreversible", icon: 'warning', showCancelButton: true, confirmButtonColor: 'var(--danger)', confirmButtonText: 'Sí, eliminar' });
+    const isDark = document.documentElement.classList.contains('dark-mode');
+
+    const res = await Swal.fire({ 
+        title: '¿Eliminar serie?', 
+        text: "Esta acción es irreversible", 
+        icon: 'warning', 
+        showCancelButton: true, 
+        confirmButtonColor: '#ef4444', 
+        cancelButtonColor: isDark ? '#475569' : '#64748b', 
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: isDark ? '#1e293b' : '#ffffff', 
+        color: isDark ? '#f1f5f9' : '#1e293b',
+        iconColor: '#f59e0b' 
+    });
+
     if (res.isConfirmed) {
         await deleteDoc(doc(db, "series", id));
-        Swal.fire({ title: 'Eliminado', icon: 'success', timer: 1000, showConfirmButton: false });
+        Swal.fire({ 
+            title: 'Eliminado', 
+            icon: 'success', 
+            timer: 1000, 
+            showConfirmButton: false,
+            background: isDark ? '#1e293b' : '#ffffff',
+            color: isDark ? '#f1f5f9' : '#1e293b'
+        });
     }
 };
 

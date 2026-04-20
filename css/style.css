@@ -267,17 +267,16 @@ input, select {
     border-radius: 24px; 
 }
 
-/* ==========================================================
-   NUEVO: SOPORTE PARA SWEETALERT2 EN MODO OSCURO
-   ========================================================== */
 .dark-mode .swal2-popup {
     background-color: var(--card-bg) !important;
     color: var(--text-main) !important;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
 }
 
 .dark-mode .swal2-title, 
-.dark-mode .swal2-html-container {
+.dark-mode .swal2-html-container,
+.dark-mode .swal2-content {
     color: var(--text-main) !important;
 }
 
@@ -295,6 +294,11 @@ input, select {
 .dark-mode .swal2-icon.swal2-warning {
     border-color: var(--warning) !important;
     color: var(--warning) !important;
+}
+
+.dark-mode .swal2-icon.swal2-success {
+    border-color: var(--success) !important;
+    color: var(--success) !important;
 }
 
 /* --- AJUSTES MÓVIL --- */
