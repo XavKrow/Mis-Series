@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Series - Stats</title>
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Mis Estadísticas</h1>
+        <div class="header-controls">
+            <button class="btn-header" id="btn-theme">🌙 / ☀️</button>
+            <button class="btn-header" onclick="location.href='dashboard.html'">Volver</button>
+            <button class="btn-header" id="btn-download" style="background: var(--success);">Descargar PDF</button>
+        </div>
+    </header>
+
+    <main id="reporte-contenido" style="padding: 40px; max-width: 800px; margin: auto;">
+        <h2 style="color: var(--primary);">Resumen General de Consumo</h2>
+        <hr style="border: 1px solid var(--border-color); margin-bottom: 30px;">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="stat-card" style="background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); text-align: center;">
+                <h4 style="color: var(--text-muted);">Capítulos Vistos</h4>
+                <p id="total-vistos" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">...</p>
+            </div>
+            <div class="stat-card" style="background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); text-align: center;">
+                <h4 style="color: var(--text-muted);">Tiempo en Pantalla en Promedio</h4>
+                <p id="tiempo-total" style="font-size: 2.5rem; font-weight: 800; color: var(--success);">...</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); height: 400px; display: flex; justify-content: center;">
+            <canvas id="chartReporte"></canvas>
+        </div>
+    </main>
+
+    <script type="module" src="./js/stats.js"></script>
+</body>
+</html>

@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, where, onSnapshot, updateDoc, doc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// --- CONFIGURACIÓN ---
+const API_KEY = 'c3996a6520eefec7d7fb0ced15c27787';
 const firebaseConfig = {
     apiKey: "AIzaSyBxdOcs-arbue2ZMw0ov0vwYnsiYcJaWKo",
     authDomain: "misseriesapp-9ae46.firebaseapp.com",
@@ -16,11 +18,16 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let currentUser = null;
+let serieSeleccionadaAPI = null;
 
-// --- PROTECCIÓN DE RUTA ---
+// --- PROTECCIÓN DE RUTA Y PERSISTENCIA DE TEMA ---
 onAuthStateChanged(auth, (user) => {
     if (user) { 
         currentUser = user; 
+        // Aplicar modo oscuro si estaba guardado antes de cargar nada
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark-mode');
+        }
         cargarSeries(); 
     } else { 
         if (!window.location.pathname.includes('index.html')) {
@@ -28,6 +35,39 @@ onAuthStateChanged(auth, (user) => {
         }
     }
 });
+
+// --- LÓGICA DE LA API (Búsqueda y Autocompletado) ---
+document.getElementById('serie-name').oninput = async (e) => {
+    const busqueda = e.target.value;
+    if (busqueda.length < 3) return;
+
+    try {
+        const urlBusqueda = `https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&language=es-MX&query=${encodeURIComponent(busqueda)}`;
+        const resBusqueda = await fetch(urlBusqueda);
+        const dataBusqueda = await resBusqueda.json();
+        
+        if (dataBusqueda.results && dataBusqueda.results.length > 0) {
+            const serie = dataBusqueda.results[0];
+            serieSeleccionadaAPI = serie;
+            
+            document.getElementById('serie-img').value = `https://image.tmdb.org/t/p/w500${serie.poster_path}`;
+
+            const urlDetalle = `https://api.themoviedb.org/3/tv/${serie.id}?api_key=${API_KEY}&language=es-MX`;
+            const resDetalle = await fetch(urlDetalle);
+            const dataDetalle = await resDetalle.json();
+
+            if (dataDetalle.seasons) {
+                const mapaSugerido = dataDetalle.seasons
+                    .filter(s => s.season_number > 0)
+                    .map(s => s.episode_count || 10)
+                    .join(', ');
+                document.getElementById('serie-map').value = mapaSugerido;
+            }
+        }
+    } catch (error) {
+        console.error("Error API:", error);
+    }
+};
 
 // --- GUARDAR NUEVA SERIE ---
 document.getElementById('btn-save').onclick = async () => {
@@ -39,11 +79,19 @@ document.getElementById('btn-save').onclick = async () => {
         const mapaCapitulos = mapaTexto.split(',').map(n => parseInt(n.trim()));
         const totalCapsSerie = mapaCapitulos.reduce((a, b) => a + b, 0);
 
+        // --- NUEVO: Obtener duración real de la API ---
+        let duracionEpisodio = 30; // Valor por defecto
+        if (serieSeleccionadaAPI && serieSeleccionadaAPI.episode_run_time && serieSeleccionadaAPI.episode_run_time.length > 0) {
+            duracionEpisodio = serieSeleccionadaAPI.episode_run_time[0];
+        }
+
         await addDoc(collection(db, "series"), {
             userId: currentUser.uid,
             nombre,
             mapaCapitulos,
             imagen: urlImg || "https://placehold.co/300x450/1e293b/white?text=Sin+Portada",
+            tmdbId: serieSeleccionadaAPI ? serieSeleccionadaAPI.id : null,
+            duracionEpisodio: duracionEpisodio, // <--- GUARDAMOS LA DURACIÓN AQUÍ
             tempActual: 1,
             capActual: 0,
             vistosGlobal: 0,
@@ -53,6 +101,7 @@ document.getElementById('btn-save').onclick = async () => {
         });
         
         ['serie-name', 'serie-map', 'serie-img'].forEach(id => document.getElementById(id).value = "");
+        serieSeleccionadaAPI = null;
     }
 };
 
@@ -176,7 +225,7 @@ window.modificarProgreso = async (id, cambio) => {
     await updateDoc(docRef, { capActual, tempActual, vistosGlobal });
 };
 
-// --- MODALES (Rápido y Edición) ---
+// --- MODALES ---
 let currentSerieId = "", quickActionType = "", editId = null;
 
 window.abrirQuickModal = (id, tipo, titulo, etiqueta, valorInicial) => {
@@ -236,23 +285,30 @@ document.getElementById('btn-update-confirm').onclick = async () => {
         const mapaCapitulos = mapaTxt.split(',').map(n => parseInt(n.trim()));
         await updateDoc(doc(db, "series", editId), { nombre, imagen, mapaCapitulos, totalCapsSerie: mapaCapitulos.reduce((a, b) => a + b, 0) });
         cerrarModal();
-        Swal.fire({ title: '¡Actualizado!', icon: 'success', timer: 1500, showConfirmButton: false, background: 'var(--card-bg)', color: 'var(--text-main)' });
+        Swal.fire({ title: '¡Actualizado!', icon: 'success', timer: 1500, showConfirmButton: false });
     }
 };
 
 window.cambiarEstrellas = async (id, n) => await updateDoc(doc(db, "series", id), { valoracion: n });
 
 window.eliminarSerie = async (id) => {
-    const res = await Swal.fire({ title: '¿Eliminar serie?', text: "Esta acción es irreversible", icon: 'warning', showCancelButton: true, confirmButtonColor: 'var(--danger)', confirmButtonText: 'Sí, eliminar', background: 'var(--card-bg)', color: 'var(--text-main)' });
+    const res = await Swal.fire({ title: '¿Eliminar serie?', text: "Esta acción es irreversible", icon: 'warning', showCancelButton: true, confirmButtonColor: 'var(--danger)', confirmButtonText: 'Sí, eliminar' });
     if (res.isConfirmed) {
         await deleteDoc(doc(db, "series", id));
         Swal.fire({ title: 'Eliminado', icon: 'success', timer: 1000, showConfirmButton: false });
     }
 };
 
-window.logout = () => signOut(auth);
+window.logout = async () => {
+    try {
+        await signOut(auth);
+        document.getElementById('series-container').innerHTML = "";
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+    }
+};
 
-// Cierres de modal genéricos
 window.onclick = (e) => {
     if (e.target.className === 'modal-overlay') { cerrarModal(); cerrarQuickModal(); }
 };

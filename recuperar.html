@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Contraseña - Control de Series</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>Nueva Contraseña</h1>
+        <p id="user-email-info" style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem;"></p>
+        
+        <div id="reset-form">
+            <input type="password" id="new-password" placeholder="Nueva contraseña (min. 6 caracteres)">
+            <input type="password" id="confirm-password" placeholder="Confirma tu contraseña">
+            <button id="btn-reset">Actualizar Contraseña</button>
+        </div>
+
+        <div class="login-extras">
+            <a href="index.html" class="link-forgot">Volver al inicio</a>
+        </div>
+    </div>
+
+    <script type="module" src="./js/recuperar.js"></script>
+</body>
+</html>
