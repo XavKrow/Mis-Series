@@ -209,7 +209,7 @@ input, select {
     border-radius: 12px;
     cursor: pointer;
     font-weight: 700;
-    flex: 1; /* Para que crezcan parejos */
+    flex: 1; 
     transition: 0.3s;
 }
 
@@ -218,7 +218,6 @@ input, select {
     transform: translateY(-2px);
 }
 
-/* Clase para el botón de Cancelar */
 .btn-cancel {
     background: transparent;
     color: var(--text-muted);
@@ -234,14 +233,6 @@ input, select {
 .btn-cancel:hover {
     background: rgba(0,0,0,0.05);
     color: var(--text-main);
-}
-
-/* Ajuste para el contenedor de botones en los modales */
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
-    width: 100%;
 }
 
 /* --- MODALES --- */
@@ -268,55 +259,42 @@ input, select {
     animation: fadeIn 0.3s ease;
 }
 
-.modal-inputs { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-
-.modal-inputs label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    margin: 10px 0 0 5px;
-}
-
-.modal-actions { display: flex; gap: 10px; margin-top: 30px; }
-
-#quick-modal-input {
-    width: 100%;
-    box-sizing: border-box; 
-    height: 80px;
-    font-size: 2.5rem;
-    font-weight: 800;
-    text-align: center;
-    background: rgba(99, 102, 241, 0.05);
-    border: 2px solid var(--primary);
-    border-radius: 16px;
-    color: var(--primary);
-    outline: none;
-    transition: 0.3s;
-    appearance: none;
-    -moz-appearance: textfield;
-}
-
-#quick-modal-input:focus {
-    background: rgba(99, 102, 241, 0.1);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#serie-img {
-    transition: all 0.3s ease;
-}
-
+/* --- REPORTE CONTENIDO --- */
 #reporte-contenido {
     background: var(--bg); 
     color: var(--text-main);
     transition: all 0.3s ease;
     border-radius: 24px; 
+}
+
+/* ==========================================================
+   NUEVO: SOPORTE PARA SWEETALERT2 EN MODO OSCURO
+   ========================================================== */
+.dark-mode .swal2-popup {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color);
+}
+
+.dark-mode .swal2-title, 
+.dark-mode .swal2-html-container {
+    color: var(--text-main) !important;
+}
+
+.dark-mode .swal2-confirm {
+    background-color: var(--primary) !important;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3) !important;
+}
+
+.dark-mode .swal2-cancel {
+    background-color: transparent !important;
+    color: var(--text-muted) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.dark-mode .swal2-icon.swal2-warning {
+    border-color: var(--warning) !important;
+    color: var(--warning) !important;
 }
 
 /* --- AJUSTES MÓVIL --- */
@@ -342,4 +320,9 @@ input, select {
     .btn-edit-small { flex: 1; max-width: 70px; }
     .btn-cap { width: 32px; height: 32px; }
     .card-actions { flex-direction: column; text-align: center; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
