@@ -3,7 +3,7 @@ import {
     getAuth, 
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
-    sendPasswordResetEmail // IMPORTANTE: Agregamos este
+    sendPasswordResetEmail 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -22,6 +22,21 @@ const auth = getAuth(app);
 const btnAction = document.getElementById('btn-action');
 const toggleAuth = document.getElementById('toggle-auth');
 let isLogin = true;
+
+// --- LÓGICA PARA MOSTRAR/OCULTAR CONTRASEÑA ---
+const togglePassword = document.getElementById('toggle-password');
+const passwordInput = document.getElementById('password');
+
+if (togglePassword && passwordInput) {
+    togglePassword.addEventListener('click', () => {
+        // Cambiar tipo de input
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Cambiar icono
+        togglePassword.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+    });
+}
 
 // Función para recuperar contraseña expuesta a window
 window.recuperarPassword = async () => {

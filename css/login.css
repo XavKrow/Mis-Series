@@ -25,10 +25,22 @@ body {
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
     width: 380px; 
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 h1 { margin-bottom: 2rem; font-weight: 800; letter-spacing: -1px; color: var(--text-light); }
+
+/* --- CONTENEDORES DE INPUT --- */
+#auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* Controlamos el margen desde el input mismo */
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
 
 input { 
     width: 100%; 
@@ -40,6 +52,12 @@ input {
     color: white;
     box-sizing: border-box;
     transition: 0.3s;
+    font-size: 1rem;
+}
+
+/* Ajuste específico para que el texto no choque con el ojo */
+#password {
+    padding-right: 48px !important;
 }
 
 input:focus {
@@ -49,6 +67,25 @@ input:focus {
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
 }
 
+/* --- BOTÓN DE VISUALIZACIÓN (OJO) --- */
+#toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%); /* Centrado vertical exacto */
+    cursor: pointer;
+    color: #94a3b8;
+    user-select: none;
+    transition: 0.3s;
+    font-size: 22px; /* Tamaño del icono */
+    z-index: 10;
+}
+
+#toggle-password:hover {
+    color: var(--brand);
+}
+
+/* --- BOTÓN ACCIÓN --- */
 button { 
     width: 100%; 
     padding: 14px; 
@@ -67,6 +104,7 @@ button:hover {
     transform: translateY(-2px);
 }
 
+/* --- EXTRAS Y LINKS --- */
 .toggle-link { 
     margin-top: 20px; 
     font-size: 0.85rem; 
@@ -83,7 +121,7 @@ button:hover {
 
 .link-forgot {
     font-size: 0.8rem;
-    color: #94a3b8; /* Mismo color que el toggle-link */
+    color: #94a3b8;
     text-decoration: none;
     transition: 0.3s;
 }

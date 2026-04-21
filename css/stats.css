@@ -1,0 +1,96 @@
+/* stats.css */
+
+/* --- CONTENEDOR DE TODO EL REPORTE --- */
+#reporte-contenido {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    /* Evitamos que el contenedor padre tenga bordes que confundan a la tabla */
+    border: none !important; 
+}
+
+/* --- TÍTULO DE LA SECCIÓN --- */
+.table-title {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+    font-size: 1.2rem;
+    font-weight: 800;
+    padding-left: 5px;
+}
+
+/* --- EL CONTENEDOR DE LA TABLA (La única "caja" visible) --- */
+.table-container {
+    background: var(--card-bg) !important;
+    border-radius: 12px;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden; /* Esto obliga a la tabla a respetar las esquinas redondeadas */
+    padding: 0 !important; /* Vital para eliminar el espacio que crea el doble marco */
+    margin-top: 10px;
+}
+
+/* --- LA TABLA PER SE --- */
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent !important; /* Para que no se encime al fondo del contenedor */
+    margin: 0;
+}
+
+.stats-table th {
+    background: rgba(99, 102, 241, 0.08); /* Tinte del color brand */
+    color: var(--primary);
+    text-align: left;
+    padding: 16px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stats-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+/* Quitamos el borde a la última fila para que no se vea feo con el redondeado */
+.stats-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- INTERACCIÓN Y RESALTES --- */
+.stats-table tr:hover {
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.time-highlight {
+    color: var(--success) !important;
+    font-weight: 800;
+}
+
+/* --- MODO OSCURO --- */
+.dark-mode .stats-table tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dark-mode .stats-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* --- AJUSTES PARA EL PDF --- */
+@media print {
+    #reporte-contenido {
+        padding: 0;
+    }
+    .table-container {
+        box-shadow: none;
+        border: 1px solid #ddd !important; /* Borde simple para impresión */
+    }
+}

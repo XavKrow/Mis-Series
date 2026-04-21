@@ -56,6 +56,20 @@ header {
     font-weight: 600 !important; 
     transition: 0.3s !important;
     font-family: 'Inter', sans-serif;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.material-symbols-outlined {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.btn-header:hover .material-symbols-outlined {
+    transform: rotate(15deg); 
 }
 
 .btn-header:hover { 
@@ -139,6 +153,23 @@ input, select {
     color: #34d399 !important; 
 }
 
+/* --- EFECTO HOVER PARA LAS SERIES --- */
+.card:hover {
+    transform: translateY(-8px); /* Eleva la tarjeta */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Sombra más intensa */
+    border-color: var(--primary); /* El borde se ilumina con tu color principal */
+}
+
+/* Opcional: Haz que la imagen haga un pequeño zoom */
+.card:hover .card-img {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+}
+
+.card-img {
+    transition: transform 0.4s ease; /* Para que el zoom sea suave */
+}
+
 /* --- INFO TEMPORADA --- */
 .temp-info { 
     background: rgba(0, 0, 0, 0.03); 
@@ -213,7 +244,7 @@ input, select {
     width: 100vw; height: 100vh;
     background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(8px);
-    display: none; 
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 9999;
@@ -320,8 +351,100 @@ input, select {
 }
 
 /* --- LIMPIEZA FINAL: Evita botones grises sin clase --- */
-button:not(.swal2-styled):not(.btn-add):not(.btn-cap):not(.btn-save-modal):not(.btn-header):not(.btn-edit-small):not(.btn-flat) {
+button:not(.swal2-styled):not(.btn-add):not(.btn-cap):not(.btn-save-modal):not(.btn-header):not(.btn-edit-small):not(.btn-flat):not(.btn-cancel) {
     background: transparent;
     border: none;
     cursor: pointer;
+}
+
+/* FIX MODAL EDICIÓN: Alineamos labels e inputs en bloque */
+#edit-modal .modal-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/*FIX QUICK MODAL: Aseguramos que el input gigante no rompa la caja */
+#quick-modal-input {
+    max-width: 100%;
+    display: block;
+}
+
+/*MEJORA DE RESPONSIVIDAD: Evita que el buscador se amontone en laptops pequeñas */
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* --- EMPTY STATE STYLES --- */
+.empty-state {
+    grid-column: 1 / -1; /* Ocupa todas las columnas del grid */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.empty-state .material-symbols-outlined {
+    font-size: 80px; /* Icono grande */
+    margin-bottom: 20px;
+    opacity: 0.3;
+    color: var(--primary);
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.empty-state p {
+    max-width: 400px;
+    font-size: 0.95rem;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.empty-state .material-symbols-outlined {
+    animation: float 3s ease-in-out infinite;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden; /* Para que los bordes redondeados funcionen */
+}
+
+.stats-table th, .stats-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stats-table th {
+    background: rgba(99, 102, 241, 0.1); /* Color brand muy suave */
+    color: var(--primary);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+.stats-table tr:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.dark-mode .stats-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
 }
