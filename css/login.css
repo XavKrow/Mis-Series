@@ -1,4 +1,6 @@
-/* login.css - Versión Optimizada */
+/* login.css - Versión Optimizada y Responsiva */
+
+/* --- 1. VARIABLES Y BASE --- */
 :root {
     --brand: #6366f1;
     --bg-dark: #0f172a;
@@ -15,17 +17,18 @@ body {
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    height: 100vh; 
+    min-height: 100vh; /* Cambiado a min-height para evitar cortes */
     margin: 0; 
     color: var(--text-light); 
 }
 
-/* --- CONTENEDOR PRINCIPAL --- */
+/* --- 2. CONTENEDOR Y TARJETA --- */
 .login-container {
     padding: 20px;
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .login-card { 
@@ -37,9 +40,10 @@ body {
     max-width: 400px; 
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
-/* --- LOGO Y TÍTULOS --- */
+/* --- 3. LOGO Y TEXTOS --- */
 .login-header {
     margin-bottom: 2rem;
 }
@@ -56,13 +60,14 @@ h1 { margin: 0; font-weight: 800; letter-spacing: -1px; font-size: 1.8rem; }
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: 8px;
+    line-height: 1.4;
 }
 
-/* --- FORMULARIO --- */
+/* --- 4. FORMULARIO E INPUTS --- */
 .form-body {
     display: flex;
     flex-direction: column;
-    text-align: left; /* Alineamos etiquetas a la izquierda */
+    text-align: left;
 }
 
 .input-group {
@@ -80,7 +85,6 @@ h1 { margin: 0; font-weight: 800; letter-spacing: -1px; font-size: 1.8rem; }
     letter-spacing: 0.5px;
 }
 
-/* --- ENVOLVEMOS LOS INPUTS (IMPORTANTE) --- */
 .input-wrapper {
     position: relative;
     width: 100%;
@@ -89,6 +93,7 @@ h1 { margin: 0; font-weight: 800; letter-spacing: -1px; font-size: 1.8rem; }
 input { 
     width: 100%; 
     padding: 14px 16px; 
+    padding-right: 45px !important; /* Espacio para iconos */
     border-radius: 14px; 
     border: 2px solid transparent;
     background: var(--input-bg);
@@ -105,7 +110,7 @@ input:focus {
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
-/* --- BOTONES INTERNOS (X y OJO) --- */
+/* --- 5. ICONOS INTERNOS (OJO Y BORRADO) --- */
 .clear-btn, .toggle-password {
     position: absolute;
     right: 14px;
@@ -118,26 +123,11 @@ input:focus {
     z-index: 5;
 }
 
-.clear-btn {
-    font-size: 1.5rem;
-    display: none; /* Se activa por JS o CSS condicional */
-}
+.clear-btn { font-size: 1.5rem; display: none; }
+input:not(:placeholder-shown) + .clear-btn { display: block; }
+.toggle-password:hover, .clear-btn:hover { color: var(--brand); }
 
-/* Mostrar la X solo cuando hay texto */
-input:not(:placeholder-shown) + .clear-btn {
-    display: block;
-}
-
-.toggle-password:hover, .clear-btn:hover {
-    color: var(--brand);
-}
-
-/* Espacio para que el texto no toque los iconos */
-input {
-    padding-right: 45px !important;
-}
-
-/* --- BOTÓN PRINCIPAL --- */
+/* --- 6. BOTÓN PRINCIPAL --- */
 .btn-primary { 
     width: 100%; 
     padding: 16px; 
@@ -159,7 +149,7 @@ input {
     box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
 }
 
-/* --- EXTRAS --- */
+/* --- 7. EXTRAS Y ENLACES --- */
 .login-extras {
     margin-top: 1.5rem;
     text-align: center;
@@ -177,9 +167,8 @@ input {
 .divider {
     display: flex;
     align-items: center;
-    text-align: center;
     margin: 1.5rem 0;
-    color: var(--input-bg);
+    color: var(--text-muted);
 }
 
 .divider::before, .divider::after {
@@ -188,25 +177,51 @@ input {
     border-bottom: 1px solid var(--input-bg);
 }
 
-.divider span {
-    padding: 0 10px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
+.divider span { padding: 0 10px; font-size: 0.8rem; font-weight: 600; }
+
+.toggle-link { font-size: 0.9rem; cursor: pointer; color: var(--text-muted); }
+.highlight { color: var(--brand); font-weight: 700; }
+
+/* --- 8. MEDIA QUERIES (RESPONSIVE) --- */
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+        align-items: flex-start; /* Evita que se pegue al centro si hay poco espacio */
+        padding-top: 30px;
+    }
+
+    .login-card {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+        box-shadow: none; /* Menos carga visual en móvil */
+        background: transparent; /* Opcional: para un look más moderno en móvil */
+        border: none;
+    }
+
+    h1 { font-size: 1.5rem; }
+    
+    .logo-icon { font-size: 2.5rem; }
+
+    input {
+        padding: 12px;
+        font-size: 16px; /* Evita el zoom automático en iOS al enfocar */
+    }
+
+    .btn-primary {
+        padding: 14px;
+    }
 }
 
-.toggle-link { 
-    text-align: center;
-    font-size: 0.9rem; 
-    cursor: pointer; 
-    color: var(--text-muted); 
-}
-
-.highlight {
-    color: var(--brand);
-    font-weight: 700;
-}
-
-.toggle-link:hover .highlight {
-    text-decoration: underline;
+/* Ajuste para pantallas muy cortas (teclado abierto) */
+@media (max-height: 600px) {
+    .login-card {
+        padding: 1.5rem;
+    }
+    .login-header {
+        margin-bottom: 1rem;
+    }
+    .logo-icon {
+        display: none; /* Ocultamos el icono para ganar espacio vertical */
+    }
 }

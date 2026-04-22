@@ -1,4 +1,4 @@
-/* stats.css - Versión Optimizada para Reportes */
+/* stats.css - Versión Optimizada para Reportes y Móviles */
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .stats-container {
@@ -7,6 +7,7 @@
     border-radius: var(--radius);
     max-width: 900px;
     margin: auto;
+    transition: all 0.3s ease;
 }
 
 .report-header {
@@ -35,6 +36,7 @@
 /* --- GRID DE RESUMEN (TARJETAS) --- */
 .stats-summary-grid {
     display: grid;
+    /* auto-fit para que se acomoden solas según el ancho */
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
@@ -47,6 +49,11 @@
     border: 1px solid var(--border-color);
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
 }
 
 .stat-label {
@@ -82,7 +89,7 @@
 
 .chart-box {
     width: 100%;
-    max-width: 500px; /* Evita que el gráfico circular sea gigante */
+    max-width: 450px; /* Tamaño ideal para circulares */
 }
 
 /* --- SECCIÓN DE TABLA --- */
@@ -97,13 +104,14 @@
     background: var(--card-bg);
     border-radius: 15px;
     border: 1px solid var(--border-color);
-    overflow: hidden;
+    overflow-x: auto; /* Permite scroll horizontal solo si es necesario */
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 .stats-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 500px; /* Evita que las columnas se colapsen */
 }
 
 .stats-table th {
@@ -124,30 +132,48 @@
     color: var(--text-main);
 }
 
-.text-center { text-align: center !important; }
-
-.stats-table tr:last-child td {
-    border-bottom: none;
-}
-
 .stats-table tr:hover {
     background: rgba(99, 102, 241, 0.03);
+}
+
+/* --- 8. MEDIA QUERIES (OPTIMIZACIÓN MÓVIL) --- */
+@media (max-width: 600px) {
+    .stats-container {
+        padding: 15px;
+    }
+
+    .report-title {
+        font-size: 1.4rem;
+    }
+
+    .stats-summary-grid {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+        gap: 15px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .chart-container-wrapper {
+        padding: 15px;
+        min-height: 300px;
+    }
+
+    /* Ajuste para que la tabla no rompa el diseño */
+    .table-responsive {
+        margin: 0 -10px; /* Aprovecha más espacio */
+        border-radius: 10px;
+    }
 }
 
 /* --- AJUSTES PDF / IMPRESIÓN --- */
 @media print {
     body { background: white !important; }
-    .stats-container { padding: 0; border: none; }
+    .stats-container { padding: 0; border: none; max-width: 100%; }
     .stat-card, .chart-container-wrapper, .table-responsive {
         box-shadow: none !important;
         border: 1px solid #eee !important;
     }
-}
-
-/* Responsive para celulares */
-@media (max-width: 600px) {
-    .stats-summary-grid {
-        grid-template-columns: 1fr;
-    }
-    .stat-value { font-size: 1.8rem; }
+    .btn-header, header { display: none !important; } /* No imprimir el menú */
 }

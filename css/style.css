@@ -58,7 +58,6 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
-    display: flex;
     padding: 8px;
 }
 .btn-header:hover {
@@ -142,7 +141,8 @@ input, select {
 /* --- GRID Y CARDS --- */
 .grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    /* Cambiado: minmax ajustado para permitir una sola columna en móviles */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
     gap: 30px; 
     padding: 30px; 
 }
@@ -154,7 +154,7 @@ input, select {
     box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
     transition: 0.4s;
     border: 1px solid var(--border-color);
-    position: relative; /* CRÍTICO para que el badge se quede dentro */
+    position: relative;
 }
 
 .card:hover { transform: translateY(-8px); border-color: var(--primary); }
@@ -220,7 +220,7 @@ input, select {
 .btn-flat { background: transparent; border: none; cursor: pointer; flex: 1; font-size: 0.75rem; font-weight: 700; text-decoration: underline; }
 .btn-edit { color: var(--primary); }
 .btn-delete { color: var(--text-muted); }
-.btn-share { color: var(--success); } /* Nuevo estilo para botón compartir */
+.btn-share { color: var(--success); }
 
 /* --- MODALES --- */
 .modal-overlay {
@@ -313,11 +313,11 @@ input, select {
     display: block;
 }
 
-/* Sincronización Maestra de SweetAlert con tu tema */
+/* --- SWEETALERT --- */
 .dark-mode .swal2-popup {
     background-color: var(--card-bg) !important;
     color: var(--text-main) !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Le da profundidad en modo oscuro */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 .dark-mode .swal2-title, 
@@ -326,11 +326,11 @@ input, select {
     color: var(--text-main) !important;
 }
 
-/* Ajuste para que los botones de SweetAlert no pierdan estilo */
 .dark-mode .swal2-confirm {
     background-color: var(--primary) !important;
 }
 
+/* --- BADGES Y COLABORACIÓN --- */
 .colab-badge {
     position: absolute;
     top: 12px;
@@ -339,28 +339,21 @@ input, select {
     display: flex;
     align-items: center;
     gap: 6px;
-    
-    /* Fondo con contraste: usamos tu color primario con opacidad */
-    background: rgba(99, 102, 241, 0.85); /* Color indigo/primary de tu app */
-    color: white; /* Texto siempre blanco sobre fondo oscuro */
-    
+    background: rgba(99, 102, 241, 0.85);
+    color: white;
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
-    
-    /* Efecto de cristal para que no se pierda en fondos complejos */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    
-    /* Borde sutil para definir la forma */
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    pointer-events: none; /* Para que no interfiera con los clics en la tarjeta */
+    pointer-events: none;
 }
 
 .colab-badge span {
-    font-size: 14px; /* Tamaño del icono */
+    font-size: 14px;
 }
 
 .dark-mode .colab-badge {
@@ -368,17 +361,15 @@ input, select {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Contenedor principal de búsqueda y filtros */
 .search-filter-container {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
     margin: 20px 0 30px 0;
     align-items: center;
-    justify-content: center; /* Centra todo el grupo */
+    justify-content: center;
 }
 
-/* El buscador con icono */
 .search-wrapper {
     flex: 1;
     min-width: 300px;
@@ -401,7 +392,6 @@ input, select {
     outline: none;
 }
 
-/* Grupo de selectores (Filtros) */
 .filter-group {
     display: flex;
     gap: 10px;
@@ -417,7 +407,6 @@ input, select {
     font-size: 0.9rem;
 }
 
-/* Estilo para los títulos de sección */
 .section-title {
     display: flex;
     align-items: center;
@@ -431,27 +420,72 @@ input, select {
     padding-bottom: 10px;
 }
 
-/* --- EMPTY STATE --- */
 .empty-state { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 60px; color: var(--text-muted); }
 .empty-state .material-symbols-outlined { font-size: 80px; color: var(--primary); animation: float 3s infinite ease-in-out; opacity: 0.4; }
 
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-/* --- MEDIA QUERIES --- */
+/* --- 8. MEDIA QUERIES (OPTIMIZACIÓN MÓVIL) --- */
 @media (max-width: 600px) {
-    header { flex-direction: column; padding: 1.2rem; gap: 15px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    .modal-actions { flex-direction: row !important; }
-    
-    .search-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+    header { 
+        flex-direction: column; 
+        padding: 1.5rem 1rem; 
+        gap: 15px; 
+        text-align: center;
     }
-    
-    #sort-filter { width: 100%; }
 
-    .section-header { margin-top: 25px; }
+    .header-controls {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Forzamos una sola columna para que no se aplaste la info */
+    .grid { 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+        padding: 15px; 
+    }
+
+    .add-section {
+        flex-direction: column;
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .search-filter-container {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+
+    .search-wrapper {
+        min-width: 100%;
+    }
+
+    .filter-group {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .filter-group select {
+        flex: 1;
+    }
+
+    /* Botones de control más grandes para pulgares */
+    .btn-cap {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .card-img {
+        height: 180px;
+    }
+
+    .section-header { 
+        margin-top: 25px; 
+        justify-content: center;
+    }
 }
 
 /* --- LIMPIEZA FINAL --- */
