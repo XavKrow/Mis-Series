@@ -8,6 +8,7 @@ import {
     onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// --- 1. CONFIGURACIÓN ---
 const firebaseConfig = {
     apiKey: "AIzaSyBxdOcs-arbue2ZMw0ov0vwYnsiYcJaWKo",
     authDomain: "misseriesapp-9ae46.firebaseapp.com",
@@ -22,19 +23,20 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// --- UTILIDADES ---
-const actualizarIconoVisual = (isDark) => {
-    const iconSpan = document.getElementById('theme-icon');
-    if (iconSpan) {
-        iconSpan.textContent = isDark ? 'light_mode' : 'dark_mode';
-    }
-};
+let miGrafico = null;
 
-// --- INICIALIZACIÓN DE INTERFAZ ---
+// --- 2. INICIALIZACIÓN DE INTERFAZ ---
 document.addEventListener('DOMContentLoaded', () => {
     const isDark = localStorage.getItem('darkMode') === 'true';
     if (isDark) document.documentElement.classList.add('dark-mode');
     actualizarIconoVisual(isDark);
+
+    // Fecha del reporte
+    const elFecha = document.getElementById('report-date');
+    if (elFecha) {
+        const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+        elFecha.innerText = `Generado el ${new Date().toLocaleDateString('es-MX', opciones)}`;
+    }
 
     const btnTheme = document.getElementById('btn-theme');
     if (btnTheme) {
@@ -42,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDarkNow = document.documentElement.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', isDarkNow);
             actualizarIconoVisual(isDarkNow);
-            setTimeout(() => location.reload(), 100); 
+            // Recarga breve para que Chart.js actualice colores de fuente
+            setTimeout(() => location.reload(), 150); 
         });
     }
 
@@ -50,12 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnDownload) btnDownload.addEventListener('click', descargarReporte);
 });
 
-// --- CARGA DE DATOS EN TIEMPO REAL ---
+const actualizarIconoVisual = (isDark) => {
+    const iconSpan = document.getElementById('theme-icon');
+    if (iconSpan) iconSpan.textContent = isDark ? 'light_mode' : 'dark_mode';
+};
+
+// --- 3. ESCUCHADOR DE FIREBASE ---
 onAuthStateChanged(auth, (user) => {
     if (user) {
         const q = query(collection(db, "series"), where("userId", "==", user.uid));
-        
-        // onSnapshot mantiene los stats actualizados si cambias algo en otra pestaña
         onSnapshot(q, (snapshot) => {
             procesarEstadisticas(snapshot);
             renderizarTabla(snapshot);
@@ -65,7 +71,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// --- LÓGICA DE NEGOCIO ---
+// --- 4. LÓGICA DE NEGOCIO ---
 
 function procesarEstadisticas(snapshot) {
     let totalMinutos = 0;
@@ -87,11 +93,9 @@ function procesarEstadisticas(snapshot) {
     const horas = Math.floor(totalMinutos / 60);
     const mins = totalMinutos % 60;
 
-    // Actualizar contadores superiores
-    const elVistos = document.getElementById('total-vistos');
-    const elTiempo = document.getElementById('tiempo-total');
-    if(elVistos) elVistos.innerText = totalCapitulos;
-    if(elTiempo) elTiempo.innerText = `${horas}h ${mins}m`;
+    // Actualizar UI
+    document.getElementById('total-vistos').innerText = totalCapitulos;
+    document.getElementById('tiempo-total').innerText = `${horas}h ${mins}m`;
 
     generarGrafico(estados);
 }
@@ -101,11 +105,10 @@ function renderizarTabla(snapshot) {
     if (!tbody) return;
 
     if (snapshot.empty) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">No hay datos aún.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay datos disponibles</td></tr>';
         return;
     }
 
-    // Solo generamos los TR, nada de DIVs o TABLEs extra aquí
     tbody.innerHTML = snapshot.docs.map(docSnap => {
         const data = docSnap.data();
         const duracion = parseInt(data.duracionEpisodio) || 24;
@@ -119,23 +122,23 @@ function renderizarTabla(snapshot) {
         return `
             <tr>
                 <td style="font-weight: 800; color: var(--primary);">${data.nombre}</td>
-                <td>${vistos} caps.</td>
-                <td>${duracion} min</td>
-                <td class="time-highlight">${tiempoFormateado}</td>
+                <td class="text-center">${vistos} caps.</td>
+                <td class="text-center">${duracion} min</td>
+                <td class="text-center" style="font-weight: 800; color: var(--success);">${tiempoFormateado}</td>
             </tr>
         `;
     }).join('');
 }
 
-let miGrafico = null; // Variable para resetear el gráfico y que no se encime
 function generarGrafico(estados) {
     const canvas = document.getElementById('chartReporte');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const colorTexto = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#000';
+    // Detectamos el color de texto del tema actual para la leyenda
+    const colorTexto = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
 
-    if (miGrafico) miGrafico.destroy(); // Destruir gráfico previo para evitar bugs visuales
+    if (miGrafico) miGrafico.destroy();
 
     miGrafico = new Chart(ctx, {
         type: 'doughnut',
@@ -144,6 +147,7 @@ function generarGrafico(estados) {
             datasets: [{
                 data: [estados.viendo, estados.terminada, estados.pendiente],
                 backgroundColor: ['#6366f1', '#10b981', '#94a3b8'],
+                hoverOffset: 10,
                 borderWidth: 0
             }]
         },
@@ -153,33 +157,38 @@ function generarGrafico(estados) {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { color: colorTexto, font: { size: 14, weight: 'bold' } }
+                    labels: { color: colorTexto, font: { size: 14, weight: 'bold', family: "'Inter', sans-serif" } }
                 }
-            }
+            },
+            cutout: '70%' // Hace el círculo más estilizado
         }
     });
 }
 
+// --- 5. GENERACIÓN DE PDF ---
 async function descargarReporte() {
     const { jsPDF } = window.jspdf;
     const element = document.getElementById('reporte-contenido');
-    const tableContainer = document.querySelector('.table-container');
+    const tableContainer = document.querySelector('.table-responsive');
     
     if (!element) return;
     
-    // Preparación para capturar todo el contenido
-    const originalStyle = tableContainer ? tableContainer.style.overflow : "";
+    // UI Feedback: Cambiar cursor a espera
+    document.body.style.cursor = 'wait';
+
+    // Preparación para capturar tabla completa
+    const originalOverflow = tableContainer ? tableContainer.style.overflow : "";
     if (tableContainer) {
         tableContainer.style.overflow = "visible";
-        tableContainer.style.height = "auto";
     }
 
     try {
+        const backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+        
         const canvas = await html2canvas(element, { 
             scale: 2, 
             useCORS: true,
-            logging: false,
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+            backgroundColor: backgroundColor,
             scrollY: -window.scrollY
         });
 
@@ -194,37 +203,34 @@ async function descargarReporte() {
         let heightLeft = imgHeight;
         let position = 0;
         const isDarkMode = document.documentElement.classList.contains('dark-mode');
-        const bgColor = isDarkMode ? [15, 23, 42] : [248, 250, 252]; // [R, G, B] aproximados a tus variables
+        
+        // Colores de fondo para el PDF según el modo
+        const bgColor = isDarkMode ? [15, 23, 42] : [248, 250, 252];
 
-        // FUNCIÓN PARA PINTAR FONDO (Evita el fondo blanco en páginas extra)
-        const pintarFondo = () => {
-            if (isDarkMode) {
-                pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-                pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-            }
+        const aplicarFondoYImagen = (pos) => {
+            pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+            pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+            pdf.addImage(imgData, 'PNG', 0, pos, pdfWidth, imgHeight);
         };
 
         // Primera página
-        pintarFondo();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+        aplicarFondoYImagen(position);
         heightLeft -= pdfHeight;
 
-        // Páginas adicionales
+        // Páginas extras si el reporte es largo
         while (heightLeft > 0) {
             position = heightLeft - imgHeight;
             pdf.addPage();
-            pintarFondo(); // Pintamos el fondo oscuro en la nueva página
-            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            aplicarFondoYImagen(position);
             heightLeft -= pdfHeight;
         }
 
-        pdf.save('Reporte_Series_Completo.pdf');
+        pdf.save(`Reporte_Series_${new Date().getTime()}.pdf`);
 
     } catch (err) {
         console.error("Error al generar PDF:", err);
     } finally {
-        if (tableContainer) {
-            tableContainer.style.overflow = originalStyle;
-        }
+        if (tableContainer) tableContainer.style.overflow = originalOverflow;
+        document.body.style.cursor = 'default';
     }
 }

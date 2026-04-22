@@ -1,14 +1,16 @@
-/* login.css */
+/* login.css - Versión Optimizada */
 :root {
-    --brand: #6366f1; /* Un violeta moderno */
-    --bg-dark: #0f172a; /* Azul noche profundo */
+    --brand: #6366f1;
+    --bg-dark: #0f172a;
     --card-bg: #1e293b;
     --input-bg: #334155;
     --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+    --danger: #ef4444;
 }
 
 body { 
-    font-family: 'Inter', 'Segoe UI', sans-serif; 
+    font-family: 'Inter', sans-serif; 
     background: var(--bg-dark); 
     display: flex; 
     justify-content: center; 
@@ -18,36 +20,77 @@ body {
     color: var(--text-light); 
 }
 
+/* --- CONTENEDOR PRINCIPAL --- */
+.login-container {
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .login-card { 
     background: var(--card-bg); 
-    padding: 3rem 2rem; 
-    border-radius: 24px; 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-    width: 380px; 
+    padding: 2.5rem 2rem; 
+    border-radius: 28px; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+    width: 100%;
+    max-width: 400px; 
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-h1 { margin-bottom: 2rem; font-weight: 800; letter-spacing: -1px; color: var(--text-light); }
-
-/* --- CONTENEDORES DE INPUT --- */
-#auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0; /* Controlamos el margen desde el input mismo */
+/* --- LOGO Y TÍTULOS --- */
+.login-header {
+    margin-bottom: 2rem;
 }
 
-.password-wrapper {
+.logo-icon {
+    font-size: 3rem;
+    color: var(--brand);
+    margin-bottom: 0.5rem;
+}
+
+h1 { margin: 0; font-weight: 800; letter-spacing: -1px; font-size: 1.8rem; }
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+/* --- FORMULARIO --- */
+.form-body {
+    display: flex;
+    flex-direction: column;
+    text-align: left; /* Alineamos etiquetas a la izquierda */
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- ENVOLVEMOS LOS INPUTS (IMPORTANTE) --- */
+.input-wrapper {
     position: relative;
     width: 100%;
 }
 
 input { 
     width: 100%; 
-    padding: 14px; 
-    margin: 12px 0; 
-    border-radius: 12px; 
-    border: 1px solid transparent;
+    padding: 14px 16px; 
+    border-radius: 14px; 
+    border: 2px solid transparent;
     background: var(--input-bg);
     color: white;
     box-sizing: border-box;
@@ -55,78 +98,115 @@ input {
     font-size: 1rem;
 }
 
-/* Ajuste específico para que el texto no choque con el ojo */
-#password {
-    padding-right: 48px !important;
-}
-
 input:focus {
     outline: none;
     border-color: var(--brand);
-    background: #1e293b;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    background: #24303f;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
-/* --- BOTÓN DE VISUALIZACIÓN (OJO) --- */
-#toggle-password {
+/* --- BOTONES INTERNOS (X y OJO) --- */
+.clear-btn, .toggle-password {
     position: absolute;
     right: 14px;
     top: 50%;
-    transform: translateY(-50%); /* Centrado vertical exacto */
+    transform: translateY(-50%);
     cursor: pointer;
-    color: #94a3b8;
+    color: var(--text-muted);
+    transition: 0.2s;
     user-select: none;
-    transition: 0.3s;
-    font-size: 22px; /* Tamaño del icono */
-    z-index: 10;
+    z-index: 5;
 }
 
-#toggle-password:hover {
+.clear-btn {
+    font-size: 1.5rem;
+    display: none; /* Se activa por JS o CSS condicional */
+}
+
+/* Mostrar la X solo cuando hay texto */
+input:not(:placeholder-shown) + .clear-btn {
+    display: block;
+}
+
+.toggle-password:hover, .clear-btn:hover {
     color: var(--brand);
 }
 
-/* --- BOTÓN ACCIÓN --- */
-button { 
+/* Espacio para que el texto no toque los iconos */
+input {
+    padding-right: 45px !important;
+}
+
+/* --- BOTÓN PRINCIPAL --- */
+.btn-primary { 
     width: 100%; 
-    padding: 14px; 
+    padding: 16px; 
     background: var(--brand); 
     border: none; 
     color: white; 
-    border-radius: 12px; 
+    border-radius: 14px; 
     cursor: pointer; 
     font-weight: 700; 
-    margin-top: 20px;
+    font-size: 1rem;
+    margin-top: 10px;
     transition: 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
 }
 
-button:hover { 
+.btn-primary:hover { 
     background: #4f46e5;
     transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
 }
 
-/* --- EXTRAS Y LINKS --- */
-.toggle-link { 
-    margin-top: 20px; 
-    font-size: 0.85rem; 
-    cursor: pointer; 
-    color: #94a3b8; 
-    transition: 0.3s;
-}
-
-.toggle-link:hover { color: var(--brand); }
-
+/* --- EXTRAS --- */
 .login-extras {
-    margin-top: 15px;
+    margin-top: 1.5rem;
+    text-align: center;
 }
 
 .link-forgot {
-    font-size: 0.8rem;
-    color: #94a3b8;
+    font-size: 0.85rem;
+    color: var(--text-muted);
     text-decoration: none;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
-.link-forgot:hover {
+.link-forgot:hover { color: var(--brand); }
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--input-bg);
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--input-bg);
+}
+
+.divider span {
+    padding: 0 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.toggle-link { 
+    text-align: center;
+    font-size: 0.9rem; 
+    cursor: pointer; 
+    color: var(--text-muted); 
+}
+
+.highlight {
     color: var(--brand);
+    font-weight: 700;
+}
+
+.toggle-link:hover .highlight {
     text-decoration: underline;
 }

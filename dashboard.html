@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard - Control de Series</title>
     <link rel="stylesheet" href="./css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%236366f1'%3E%3Cpath d='M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-80-160 200-160-200-160v320Z'/%3E%3C/svg%3E">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         if (localStorage.getItem('darkMode') === 'true') {
@@ -20,50 +21,98 @@
     <header>
         <h1>Control de Series</h1>
         <div class="header-controls">
+            <button onclick="window.cambiarMiNombre()" class="btn-header" title="Editar Perfil">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
             <button onclick="toggleDarkMode()" class="btn-header" id="theme-toggle">
                 <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
             </button>
-            <button class="btn-header" onclick="location.href='stats.html'">Estadísticas</button>
-            <button onclick="logout()" class="btn-header">Salir</button>
+            <button class="btn-header" onclick="location.href='stats.html'">
+                <span class="material-symbols-outlined">analytics</span> Estadísticas
+            </button>
+            <button onclick="logout()" class="btn-header">
+                <span class="material-symbols-outlined">logout</span> Salir
+            </button>
         </div>
     </header>
 
     <section class="add-section">
-        <input type="text" id="serie-name" placeholder="Nombre de la serie">
-        <input type="text" id="serie-map" placeholder="Caps por temp (ej: 8, 10, 8)">
-        <input type="text" id="serie-img" placeholder="URL del póster (link de imagen)">
+        <div class="input-wrapper">
+            <input type="text" id="serie-name" placeholder="Nombre de la serie">
+            <span class="clear-btn" onclick="clearInput('serie-name')">&times;</span>
+        </div>
+        <div class="input-wrapper">
+            <input type="text" id="serie-map" placeholder="Caps por temp (ej: 8, 10, 8)">
+            <span class="clear-btn" onclick="clearInput('serie-map')">&times;</span>
+        </div>
+        <div class="input-wrapper">
+            <input type="text" id="serie-img" placeholder="URL del póster (link de imagen)">
+            <span class="clear-btn" onclick="clearInput('serie-img')">&times;</span>
+        </div>
         <button class="btn-add" id="btn-save">Agregar Serie</button>
     </section>
 
-    <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Buscar en mi lista..." onkeyup="filtrarSeries()">
-        <select id="sort-filter" onchange="ordenarSeries()">
-            <option value="recientes">Nuevas primero</option>
-            <option value="antiguas">Más antiguas</option>
-            <option value="nombre">Nombre (A-Z)</option>
-            <option value="nombre-rev">Nombre (Z-A)</option>
-            <option value="progreso-max">Más avance (%)</option>
-            <option value="progreso-min">Menos avance (%)</option>
-            <option value="valoracion">Mejor puntuadas ★</option>
-            <option value="capitulos">Más capítulos totales</option>
-        </select>
+    <div class="search-filter-container">
+        <div class="search-wrapper">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="input-busqueda" placeholder="Buscar en mis listas...">
+            <span class="clear-btn" onclick="clearInput('input-busqueda')">&times;</span>
+        </div>
+        
+        <div class="filter-group">
+            <select id="sort-filter" onchange="window.ordenarSeries()">
+                <option value="recientes">Nuevas primero</option>
+                <option value="antiguas">Más antiguas</option>
+                <option value="nombre">Nombre (A-Z)</option>
+                <option value="nombre-rev">Nombre (Z-A)</option>
+                <option value="progreso-max">Más avance (%)</option>
+                <option value="progreso-min">Menos avance (%)</option>
+                <option value="valoracion">Mejor puntuadas ★</option>
+                <option value="capitulos">Más capítulos totales</option>
+            </select>
+
+            <select id="filter-type" onchange="window.filtrarPorTipo()">
+                <option value="all">Todas las listas</option>
+                <option value="personal">Mis Series</option>
+                <option value="colab">Compartidas</option>
+            </select>
+        </div>
     </div>
 
+    <div class="section-header section-title" id="title-personal">
+        <span class="material-symbols-outlined">person</span>
+        <h2>Mis Series Personales</h2>
+    </div>
     <main class="grid" id="series-container"></main>
+
+    <hr class="section-divider section-title-divider">
+
+    <div class="section-header section-title" id="title-colab">
+        <span class="material-symbols-outlined">groups</span>
+        <h2>Nuestras Series Colaborativas</h2>
+    </div>
+    <main class="grid" id="colaborativas-container"></main>
+
 
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>Editar Serie</h2>
             <div class="modal-inputs">
                 <label>Nombre de la serie</label>
-                <input type="text" id="edit-name">
-                
+                <div class="input-wrapper">
+                    <input type="text" id="edit-name">
+                    <span class="clear-btn" onclick="clearInput('edit-name')">&times;</span>
+                </div>
                 <label>URL del Póster</label>
-                <input type="text" id="edit-img">
-                
-                <label>Capítulos por temporada (separados por coma)</label>
-                <input type="text" id="edit-map" placeholder="ej: 8, 10, 8">
-
+                <div class="input-wrapper">
+                    <input type="text" id="edit-img">
+                    <span class="clear-btn" onclick="clearInput('edit-img')">&times;</span>
+                </div>
+                <label>Capítulos por temporada (ej: 8, 10, 8)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="edit-map">
+                    <span class="clear-btn" onclick="clearInput('edit-map')">&times;</span>
+                </div>
                 <label>Minutos promedio por capítulo</label>
                 <input type="number" id="edit-episodio-duracion" placeholder="Ej: 24">
             </div>
@@ -76,14 +125,35 @@
 
     <div id="quick-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 350px;">
-            <h2 id="quick-modal-title">Título Dinámico</h2>
+            <h2 id="quick-modal-title">Acción Rápida</h2>
             <div class="modal-inputs">
-                <label id="quick-modal-label">Descripción</label>
+                <label id="quick-modal-label">Valor</label>
                 <input type="number" id="quick-modal-input" placeholder="0">
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="window.cerrarQuickModal()">Cancelar</button>
                 <button class="btn-save-modal" id="btn-quick-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="share-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">share</span>
+                <h2>Compartir Serie</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Crea una copia colaborativa para verla con alguien más.</p>
+            </div>
+            <div class="modal-inputs">
+                <label>Correo del colaborador</label>
+                <div class="input-wrapper">
+                    <input type="email" id="share-email" placeholder="ejemplo@correo.com">
+                    <span class="clear-btn" onclick="clearInput('share-email')">&times;</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="window.cerrarShareModal()">Cancelar</button>
+                <button class="btn-save-modal" id="btn-share-confirm" style="background: var(--success) !important;">Compartir</button>
             </div>
         </div>
     </div>

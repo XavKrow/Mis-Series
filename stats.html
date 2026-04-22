@@ -2,65 +2,89 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reporte de Series - Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas</title>
+    
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="/css/stats.css">
+    <link rel="stylesheet" href="./css/stats.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%236366f1'%3E%3Cpath d='M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-80-160 200-160-200-160v320Z'/%3E%3C/svg%3E">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        // Aplicar modo oscuro antes de renderizar para evitar parpadeos
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    </script>
 </head>
 <body>
+
     <header>
         <h1>Mis Estadísticas</h1>
         <div class="header-controls">
             <button id="btn-theme" class="btn-header">
                 <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
             </button>
-            <button class="btn-header" onclick="location.href='dashboard.html'">Volver</button>
-            <button class="btn-header" id="btn-download" style="background: var(--success);">Descargar PDF</button>
+            <button class="btn-header" onclick="location.href='dashboard.html'">
+                <span class="material-symbols-outlined">arrow_back</span> Volver
+            </button>
+            <button class="btn-header" id="btn-download" style="background: var(--success) !important; color: white !important; border: none !important;">
+                <span class="material-symbols-outlined">picture_as_pdf</span> Descargar PDF
+            </button>
         </div>
     </header>
 
-    <main id="reporte-contenido" style="padding: 40px; max-width: 800px; margin: auto;">
-        <h2 style="color: var(--primary);">Resumen General de Consumo</h2>
-        <hr style="border: 1px solid var(--border-color); margin-bottom: 30px;">
+    <main id="reporte-contenido" class="stats-container">
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="stat-card" style="background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); text-align: center;">
-                <h4 style="color: var(--text-muted);">Capítulos Vistos</h4>
-                <p id="total-vistos" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">...</p>
+        <div class="report-header">
+            <h2 class="report-title">Resumen General de Consumo</h2>
+            <p id="report-date" class="report-subtitle"></p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="stats-summary-grid">
+            <div class="stat-card">
+                <h4 class="stat-label">Capítulos Vistos</h4>
+                <p id="total-vistos" class="stat-value text-primary">...</p>
             </div>
-            <div class="stat-card" style="background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); text-align: center;">
-                <h4 style="color: var(--text-muted);">Tiempo en Pantalla en Promedio</h4>
-                <p id="tiempo-total" style="font-size: 2.5rem; font-weight: 800; color: var(--success);">...</p>
+            <div class="stat-card">
+                <h4 class="stat-label">Tiempo en Pantalla</h4>
+                <p id="tiempo-total" class="stat-value text-success">...</p>
             </div>
         </div>
 
-        <div style="margin-top: 40px; background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); height: 400px; display: flex; justify-content: center;">
-            <canvas id="chartReporte"></canvas>
-        </div>
-
-        <div id="reporte-contenido">
-            <div class="seccion-tabla-reporte">
-                <h3 class="titulo-tabla">Desglose de Tiempo por Serie</h3>
-                <div class="table-container">
-                    <table class="stats-table">
-                        <thead>
-                            <tr>
-                                <th>Serie</th>
-                                <th>Vistos</th>
-                                <th>Duración</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-stats-body"></tbody>
-                    </table>
-                </div>
+        <section class="chart-container-wrapper">
+            <div class="chart-box">
+                <canvas id="chartReporte"></canvas>
             </div>
-        </div>
+        </section>
+
+        <section class="details-section">
+            <h3 class="section-title">Desglose de Tiempo por Serie</h3>
+            <div class="table-responsive">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Serie</th>
+                            <th class="text-center">Vistos</th>
+                            <th class="text-center">Duración</th>
+                            <th class="text-center">Total Acumulado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-stats-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
     <script type="module" src="./js/stats.js"></script>

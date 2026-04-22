@@ -1,96 +1,153 @@
-/* stats.css */
+/* stats.css - Versión Optimizada para Reportes */
 
-/* --- CONTENEDOR DE TODO EL REPORTE --- */
-#reporte-contenido {
+/* --- CONTENEDOR PRINCIPAL --- */
+.stats-container {
     background: var(--bg);
-    padding: 20px;
+    padding: 30px;
     border-radius: var(--radius);
-    height: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    /* Evitamos que el contenedor padre tenga bordes que confundan a la tabla */
-    border: none !important; 
+    max-width: 900px;
+    margin: auto;
 }
 
-/* --- TÍTULO DE LA SECCIÓN --- */
-.table-title {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    color: var(--text-main);
-    font-size: 1.2rem;
+.report-header {
+    margin-bottom: 25px;
+}
+
+.report-title {
+    color: var(--primary);
+    font-size: 1.8rem;
     font-weight: 800;
-    padding-left: 5px;
-}
-
-/* --- EL CONTENEDOR DE LA TABLA (La única "caja" visible) --- */
-.table-container {
-    background: var(--card-bg) !important;
-    border-radius: 12px;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    overflow: hidden; /* Esto obliga a la tabla a respetar las esquinas redondeadas */
-    padding: 0 !important; /* Vital para eliminar el espacio que crea el doble marco */
-    margin-top: 10px;
-}
-
-/* --- LA TABLA PER SE --- */
-.stats-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: transparent !important; /* Para que no se encime al fondo del contenedor */
     margin: 0;
 }
 
-.stats-table th {
-    background: rgba(99, 102, 241, 0.08); /* Tinte del color brand */
-    color: var(--primary);
-    text-align: left;
-    padding: 16px;
+.report-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin-bottom: 30px;
+}
+
+/* --- GRID DE RESUMEN (TARJETAS) --- */
+.stats-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
     font-size: 0.75rem;
     font-weight: 800;
-    text-transform: uppercase;
     letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.text-primary { color: var(--primary); }
+.text-success { color: var(--success); }
+
+/* --- SECCIÓN DE GRÁFICO --- */
+.chart-container-wrapper {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 350px;
+}
+
+.chart-box {
+    width: 100%;
+    max-width: 500px; /* Evita que el gráfico circular sea gigante */
+}
+
+/* --- SECCIÓN DE TABLA --- */
+.section-title {
+    margin-bottom: 15px;
+    color: var(--text-main);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.table-responsive {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stats-table th {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--primary);
+    text-align: left;
+    padding: 18px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
     border-bottom: 1px solid var(--border-color);
 }
 
 .stats-table td {
-    padding: 16px;
+    padding: 16px 18px;
     border-bottom: 1px solid var(--border-color);
     font-size: 0.9rem;
     color: var(--text-main);
 }
 
-/* Quitamos el borde a la última fila para que no se vea feo con el redondeado */
+.text-center { text-align: center !important; }
+
 .stats-table tr:last-child td {
     border-bottom: none;
 }
 
-/* --- INTERACCIÓN Y RESALTES --- */
 .stats-table tr:hover {
-    background: rgba(99, 102, 241, 0.04);
+    background: rgba(99, 102, 241, 0.03);
 }
 
-.time-highlight {
-    color: var(--success) !important;
-    font-weight: 800;
-}
-
-/* --- MODO OSCURO --- */
-.dark-mode .stats-table tr:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.dark-mode .stats-table td {
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-/* --- AJUSTES PARA EL PDF --- */
+/* --- AJUSTES PDF / IMPRESIÓN --- */
 @media print {
-    #reporte-contenido {
-        padding: 0;
+    body { background: white !important; }
+    .stats-container { padding: 0; border: none; }
+    .stat-card, .chart-container-wrapper, .table-responsive {
+        box-shadow: none !important;
+        border: 1px solid #eee !important;
     }
-    .table-container {
-        box-shadow: none;
-        border: 1px solid #ddd !important; /* Borde simple para impresión */
+}
+
+/* Responsive para celulares */
+@media (max-width: 600px) {
+    .stats-summary-grid {
+        grid-template-columns: 1fr;
     }
+    .stat-value { font-size: 1.8rem; }
 }
